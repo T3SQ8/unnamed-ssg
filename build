@@ -1,0 +1,17 @@
+#!/bin/sh
+
+export output="/tmp/tmp.rAatcCNxk9"
+PATH="$PATH:scripts"
+indexsep="|"
+
+[ -d "$output" ] && rm -r "$output"
+mkdir -p "$output"
+
+# Mics
+find -L * -exec mvfiles '{}' +
+
+# RSS
+rss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
+
+# Index
+index -F"$indexsep" index.db | wraphtml > "$output/index.html"

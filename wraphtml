@@ -1,0 +1,10 @@
+#!/bin/sh
+
+while getopts t: arg; do
+	case $arg in
+		t) template=$OPTARG;;
+	esac
+done
+shift $(expr $OPTIND - 1)
+
+sed "/<!--WRAPHTML-->/r ${1:-/dev/stdin}" "${template:-template.html}"

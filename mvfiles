@@ -1,0 +1,33 @@
+#!/bin/sh
+
+for infile do
+	outfile="$output/$infile"
+	outdir=${outfile%/*}
+	basename=${outfile%.*} # Outfile without extention
+	nameonly=${basename##*/} # Without extention or directory path
+
+	echo "$infile"
+	[ -d "$infile" ] && mkdir -p "$outfile" && continue
+
+	case $infile in
+		template.*|scripts/*|archive/*)
+			cp "$infile" "$outfile"
+			;;
+		*.jpg|*.png)
+			convert "$infile" -strip "$outfile"
+			;;
+		*.html)
+			toc "$infile" | wraphtml > "$outfile"
+			;;
+		#*.md)
+		#	md2html --github "$infile" | toc | wraphtml > "$basename.html"
+		#	;;
+		#*.tex)
+		#	pdflatex -output-directory "$outdir" "$infile" > /dev/null 2>&1
+		#	cp "$infile" "$outfile"
+		#	;;
+		*)
+			cp "$infile" "$outfile"
+			;;
+	esac
+done

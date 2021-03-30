@@ -1,0 +1,21 @@
+#!/usr/bin/awk -f
+
+BEGIN {
+	FS="</?h[1-6][^>]*>"
+	print "<ol class=\"toc\">"
+}
+
+{
+	gsub(/\t/, "")
+	if ($0 ~ FS) {
+		size = substr($0, 3, 1) # Get heading size (<hX>)
+		for (i = 2; i <= size; i++) print "<ol>"
+		printf "<li>%s</li>\n", $2
+		for (i = 2; i <= size; i++) print "</ol>"
+	}
+}
+
+END {
+	print "</ol>"
+	while (getline<FILENAME) {print}
+}

@@ -1,0 +1,24 @@
+#!/usr/bin/awk -f
+
+/^[#+]/ {next}
+
+{
+	title=$3
+	date=$1
+	file=$2
+	print "<item>"
+	printf "<title>%s</title>\n", title
+	printf "<link>%s</link>\n", file
+	printf "<guid>%s</guid>\n", file
+	printf "<pubDate>%s</pubDate>\n", date
+	print "<description><![CDATA["
+
+	if (ext[split(file,ext,".")] == "html" && system("test -f " file)==0)
+		while (getline<file) {print}
+	else
+		printf "<a href=\"%s\">%s</a>\n", file, file
+	if ($4) printf "<a href=\"%s\">%s</a>\n", $4, $4
+
+	print "]]></description>"
+	print "</item>"
+}
