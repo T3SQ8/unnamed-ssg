@@ -19,6 +19,7 @@ BEGIN {
 	printf "<a href=\"%s\">%s</a>\n", $2, $3
 	if ($4)
 		printf "(<a href=\"%s\">Källa</a>)\n", $4
+	print $5
 	print "</li>"
 }
 

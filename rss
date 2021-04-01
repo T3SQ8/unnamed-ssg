@@ -19,6 +19,7 @@
 		printf "<a href=\"%s\">%s</a>\n", file, file
 	if ($4) printf "<a href=\"%s\">%s</a>\n", $4, $4
 
+	print $5
 	print "]]></description>"
 	print "</item>"
 }
