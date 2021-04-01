@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export output="/tmp/tmp.rAatcCNxk9"
+export output="$(mktemp -d)"
 PATH="$PATH:scripts"
 indexsep="|"
 
@@ -15,3 +15,5 @@ rss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
 
 # Index
 index -F"$indexsep" index.db | wraphtml > "$output/index.html"
+
+echo "Generated Website outputted to $output"
