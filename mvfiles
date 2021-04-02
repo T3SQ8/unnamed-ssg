@@ -13,14 +13,14 @@ for infile do
 		template.*|scripts/*|archive/*)
 			cp "$infile" "$outfile"
 			;;
-		*.jpg|*.png)
-			convert "$infile" -strip "$outfile"
-			;;
+		#*.jpg|*.png)
+		#	convert "$infile" -strip "$outfile"
+		#	;;
 		*.html)
 			gentoc "$infile" | wraphtml > "$outfile"
 			;;
 		#*.md)
-		#	md2html --github "$infile" | gentoc | wraphtml > "$basename.html"
+		#	pandoc -f gfm -f html "$infile" | gentoc | wraphtml > "$basename.html"
 		#	;;
 		#*.tex)
 		#	pdflatex -output-directory "$outdir" "$infile" > /dev/null 2>&1
