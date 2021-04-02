@@ -14,8 +14,8 @@ Create a database file `index.db` with the following syntax:
 # Lines bigening with # Are ignored
 +Lines begening with + are made into h3 tags
 # Create entires in the following manner:
-# Date|file|entry title|source|extra html
-2021-04-02|test.pdf|Test file|test.tex|(More info <a href="https://example.com">here</a>)
+# Date|file|entry title|extra html
+2021-04-02|test.pdf|Test file|(More info <a href="https://example.com">here</a>)
 ```
 This will result in the following output:
 ```html
@@ -23,7 +23,6 @@ This will result in the following output:
 <li>
 <b>2021-04-02:</b>
 <a href="test.pdf">Test file</a>
-(<a href="test.tex">Källa</a>)
 (More info <a href="https://example.com">here</a>)
 </li>
 </ul>

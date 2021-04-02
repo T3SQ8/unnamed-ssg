@@ -21,9 +21,7 @@ BEGIN {
 	print "<li>"
 	printf "<b>%s:</b>\n", $1
 	printf "<a href=\"%s\">%s</a>\n", $2, $3
-	if ($4)
-		printf "(<a href=\"%s\">Källa</a>)\n", $4
-	print $5
+	print $4
 	print "</li>"
 }
 

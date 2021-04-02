@@ -18,12 +18,11 @@
 	print "<description><![CDATA["
 
 	if (ext[split(file,ext,".")] == "html" && system("test -f " file)==0)
-		while (getline<file) {print}
+		while (getline tmp<file) {print tmp}
 	else
 		printf "<a href=\"%s\">%s</a>\n", file, file
-	if ($4) printf "<a href=\"%s\">%s</a>\n", $4, $4
 
-	print $5
+	print $4
 	print "]]></description>"
 	print "</item>"
 }
