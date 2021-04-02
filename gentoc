@@ -4,13 +4,13 @@
 # gentoc file1.html > file2.html
 
 temp=$(mktemp)
-cat "${1:--}" > "$temp"
 
-tr '\n' ' ' < "$temp" | tr -d '\t' |
+cat "${1:--}" | tee "$temp" | tr '\n' ' ' | tr -d '\t' |
 	grep -o '<h[0-6][^>]*>[^<]\+</h[0-6]>' |
 	awk -F'</?h[1-6][^>]*>' '
 	BEGIN {
 		print "<ol class=\"toc\">"
+		last_level = 1
 	}
 
 	{
@@ -27,6 +27,7 @@ tr '\n' ' ' < "$temp" | tr -d '\t' |
 	}
 
 	END {
+		for (i = 1; i < current_level; i++) print "</ol>"
 		print "</ol>"
 	}
 
