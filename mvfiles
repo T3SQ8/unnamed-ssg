@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Run specific commands depending on the input files extension. See README for
+# more information.
+# mvfiles file1 file2
+
 for infile do
 	outfile="$output/$infile"
 	outdir=${outfile%/*}

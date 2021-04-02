@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Generate a table of contents form a HTML file. Then append the original file.
+# gentoc file1.html > file2.html
+
 temp=$(mktemp)
 cat "${1:--}" > "$temp"
 

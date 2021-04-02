@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Inject the file when the string '<!--WRAPHTML-->' is found in the template.
+# wraphtml file.html > out.html
+# ... | wraphtml [ -t template_file ] > out.html
+
 while getopts t: arg; do
 	case $arg in
 		t) template=$OPTARG;;

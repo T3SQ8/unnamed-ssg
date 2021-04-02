@@ -1,5 +1,9 @@
 #!/usr/bin/awk -f
 
+# Generate an RSS feed from an index database. Do not forget to set the field
+# separator using the -F flag. See README for more information.
+# genrss -F'|' index.db > rss.xml
+
 /^[#+]/ {next}
 
 {
