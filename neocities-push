@@ -1,7 +1,0 @@
-#!/bin/sh
-
-. ssg-build
-
-find "$output" -type f ! -regex '.*\.asc\|.*\.atom\|.*\.bin\|.*\.css\|.*\.csv\|.*\.dae\|.*\.eot\|.*\.epub\|.*\.geojson\|.*\.gif\|.*\.gltf\|.*\.htm\|.*\.html\|.*\.ico\|.*\.jpeg\|.*\.jpg\|.*\.js\|.*\.json\|.*\.key\|.*\.kml\|.*\.knowl\|.*\.less\|.*\.manifest\|.*\.markdown\|.*\.md\|.*\.mf\|.*\.mid\|.*\.midi\|.*\.mtl\|.*\.obj\|.*\.opml\|.*\.otf\|.*\.pdf\|.*\.pgp\|.*\.png\|.*\.rdf\|.*\.rss\|.*\.sass\|.*\.scss\|.*\.svg\|.*\.text\|.*\.tsv\|.*\.ttf\|.*\.txt\|.*\.webapp\|.*\.webmanifest\|.*\.webp\|.*\.woff\|.*\.woff2\|.*\.xcf\|.*\.xml\|.*\.' -exec mv '{}' '{}.txt' \;
-
-neocities push "$output"
