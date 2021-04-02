@@ -1,11 +1,12 @@
 #!/bin/sh
 
-export output="$(mktemp -d)"
-PATH="$PATH:scripts"
+export output="$(mktemp -dp /tmp 'ssg-XXXXX')"
+# PATH="$PATH:unnamed-ssg"
 indexsep="|"
 
-[ -d "$output" ] && rm -r "$output"
-mkdir -p "$output"
+# # Uncomment if $output is not a temporary directory
+# [ -d "$output" ] && rm -r "$output"
+# mkdir -p "$output"
 
 # Mics
 find -L * -exec mvfiles '{}' +
