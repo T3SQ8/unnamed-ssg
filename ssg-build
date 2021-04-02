@@ -12,9 +12,9 @@ indexsep="|"
 find -L * -exec mvfiles '{}' +
 
 # RSS
-rss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
+genrss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
 
 # Index
-index -F"$indexsep" index.db | wraphtml > "$output/index.html"
+genindex -F"$indexsep" index.db | wraphtml > "$output/index.html"
 
 echo "Generated Website outputted to $output"

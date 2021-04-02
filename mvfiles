@@ -17,10 +17,10 @@ for infile do
 			convert "$infile" -strip "$outfile"
 			;;
 		*.html)
-			toc "$infile" | wraphtml > "$outfile"
+			gentoc "$infile" | wraphtml > "$outfile"
 			;;
 		#*.md)
-		#	md2html --github "$infile" | toc | wraphtml > "$basename.html"
+		#	md2html --github "$infile" | gentoc | wraphtml > "$basename.html"
 		#	;;
 		#*.tex)
 		#	pdflatex -output-directory "$outdir" "$infile" > /dev/null 2>&1
