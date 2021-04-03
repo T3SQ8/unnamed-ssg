@@ -2,14 +2,29 @@
 
 # The script that utilizes the other scripts to generate a full site. See
 # README for more information.
+# ssg-build [ -f ] [ -o output ]
 
-export output="$(mktemp -dp /tmp 'ssg-XXXXX')"
-# PATH="$PATH:unnamed-ssg"
 indexsep="|"
 
-# # Uncomment if $output is not a temporary directory
-# [ -d "$output" ] && rm -r "$output"
-# mkdir -p "$output"
+while getopts fo: arg; do
+	case $arg in
+		f) force=1 ;;
+		o) output=$OPTARG;;
+	esac
+done
+shift $(expr $OPTIND - 1)
+
+if [ -d "$output" ] && [ ! "$force" ]; then
+	printf "'$output' already exists. Do you want to procede? [y/N] "
+	read -r cont
+	case $cont in
+		y|Y) ;;
+		*) exit;;
+	esac
+fi
+
+[ "$output" ] || output="$(mktemp -dp /tmp 'ssg-XXXXX')"
+export output
 
 # Mics
 find -L * -exec mvfiles '{}' +

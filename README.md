@@ -67,6 +67,12 @@ feed entry.
 </rss>
 ```
 
+# Website generation
+Running `ssg-build` will use the other scripts to generate the website in a
+temporary directory. The output directory can be specified using the `-o` flag.
+If the output directory already exists, you will be prompted you want to continue.
+The prompt can be skipped with the `-f` flag.
+
 # Table of contents generator
 Every HTML file will have a table of contents generated as a list and
 prepend to the beginning of the file. The list will have a class name of "toc"
