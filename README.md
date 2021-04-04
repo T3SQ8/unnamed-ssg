@@ -11,20 +11,31 @@ Choose one of the following methods to utilize the scripts:
 ## Index database
 Create a database file `index.db` with the following syntax:
 ```
-# Lines bigening with # Are ignored
-+Lines begening with + are made into h3 tags
+# Lines beginning with # Are ignored
++Lines beginning with + are made into h3 tags
 # Create entires in the following manner:
-# Date|file|entry title|extra html
+# Date|file|entry title|extra HTML
 2021-04-02|test.pdf|Test file|(More info <a href="https://example.com">here</a>)
+$<p>Lines beginning with
+$<code>$</code>
+$are printed without changing (except the leading $ being removed)</p>
 ```
 This will result in the following output:
 ```html
+<ul>
+</ul>
+<h3>Lines beginning with + are made into h3 tags</h3>
 <ul>
 <li>
 <b>2021-04-02:</b>
 <a href="test.pdf">Test file</a>
 (More info <a href="https://example.com">here</a>)
 </li>
+</ul>
+<p>Lines beginning with
+<code>$</code>
+are printed without changing (except the leading $ being removed)</p>
+<ul>
 </ul>
 ```
 `$indexsep` can be changed in `ssg-build` to use any other field separator than `|`

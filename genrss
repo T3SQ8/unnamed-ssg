@@ -4,7 +4,7 @@
 # separator using the -F flag. See README for more information.
 # genrss -F'|' index.db > rss.xml
 
-/^[#+]/ {next}
+/^[#+$]|^$/ {next}
 
 {
 	title=$3
