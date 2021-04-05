@@ -58,12 +58,14 @@ could look like this:
 	</body>
 </html>
 ```
-The default template file can be changed in `wraphtml` or with the `-t` option.
+The template file used can be changed in `wraphtml` or with the `-t` option.
 
 ### RSS
-An RSS feed will also be generated as `rss.xml`
-If the input file ($2) is a HTML file, it will be fully included in the feed as
-to make the feed readable from and external feed reader without needing to open
+An RSS feed will also be generated and outputted to `rss.xml`.
+If the input file
+(<code>$2</code>)
+is a HTML file, it will be fully included in the feed as
+to make the feed readable from an external feed reader without needing to open
 the file in a web browser. Extra HTML will also be included at the end of the
 feed entry.
 ```xml
@@ -72,6 +74,7 @@ feed entry.
 	<channel>
 		<title>Example feed</title>
 		<link>https://example.com</link>
+		<link rel="stylesheet" href="css/style.css">
 		<description>Example feed</description>
 			<!--WRAPHTML-->
 	</channel>
@@ -101,7 +104,7 @@ Ut enim ad minim veniam,
 <h1>Heading 5</h1>
 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 ```
-Will become:
+Becomes:
 ```html
 <ol class="toc">
 	<li>Heading 1</li>
@@ -128,13 +131,13 @@ quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequa
 `gentoc` does not handle indentation. It was done to make afterwards in the example above.
 
 # Ignored files and exeptions
-Special handling for specific files is handled by a case statement in `mvfiles`
+Special handling for specific files is done through a case statement in `mvfiles`
 (files are not actually moved as the name implies).
 ```bash
 template.*|scripts/*|archive/*) # Globs here are copied without changing
 	cp "$infile" "$outfile"
 	;;
-*.out) # Add files to be skipped
+*.out) # Skipping files
 	continue
 	;;
 *) # The general rule for remaining file types
