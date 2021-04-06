@@ -21,7 +21,7 @@ Create a database file `index.db` with the following syntax:
 $<p>Lines beginning with a dollar sign
 $are printed without any change except the leading
 $dollar sign getting removed</p>
-2021-04-12|file2.html|Another entry|See <a href="https://example.com">this</a> for more info
+2021-04-12|file.pdf|Another entry|See <a href="https://example.com">this</a> for more info
 2021-04-06|file.html|Test entry|More info <a href="https://example.com">here</a>
 ```
 `$indexsep` can be changed in `ssg-build` to use any other field separator than `|`.
@@ -49,10 +49,11 @@ The HTML template file used can be changed in `wraphtml` or with the `-t` option
 
 ### RSS
 An RSS feed will also be generated and outputted to `rss.xml`. If the input
-file (`$2`) ends with a `.html` extension, it will be fully included in the
-feed as to make it readable from an RSS reader without needing to open the file
-in a web browser. Extra HTML (`$4`) will also be included at the end of the
-feed entry. The template file (`template.xml`) may look like this:
+file (`$2`) ends with a `.html` extension and is readable, it will be fully
+included in the feed as to make it readable from an RSS reader without needing
+to open the file in a web browser. Extra HTML (`$4`) will also be included at
+the end of the feed entry. The template file (`template.xml`) may look like
+this:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
@@ -92,7 +93,7 @@ will be generated from the example templates [above](#website-generation):
 		<ul>
 			<li>
 				<b>2021-04-12:</b>
-				<a href="file2.html">Another entry</a>
+				<a href="file.pdf">Another entry</a>
 				See <a href="https://example.com">this</a> for more info
 			</li>
 			<li>
@@ -114,14 +115,14 @@ will be generated from the example templates [above](#website-generation):
 		<link>https://example.com</link>
 		<link rel="stylesheet" href="css/style.css">
 		<description>Example feed</description>
-				<!--WRAPHTML-->
+		<!--WRAPHTML-->
 		<item>
 			<title>Another entry</title>
-			<link>file2.html</link>
-			<guid>file2.html</guid>
+			<link>file.pdf</link>
+			<guid>file.pdf</guid>
 			<pubDate>2021-04-12</pubDate>
 			<description><![CDATA[
-			<a href="file2.html">file2.html</a>
+			<a href="file.pdf">file.pdf</a>
 			See <a href="https://example.com">this</a> for more info
 			]]></description>
 		</item>
@@ -131,7 +132,8 @@ will be generated from the example templates [above](#website-generation):
 			<guid>file.html</guid>
 			<pubDate>2021-04-06</pubDate>
 			<description><![CDATA[
-			<a href="file.html">file.html</a>
+			<h1>Hello</h1>
+			<p>This is just some random HTML in <b>file.html</b>.</p>
 			More info <a href="https://example.com">here</a>
 			]]></description>
 		</item>
