@@ -33,7 +33,7 @@ find -L * -exec mvfiles '{}' +
 genrss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
 
 # Index
-genindex -F"$indexsep" index.db | wraphtml > "$output/index.html"
+genindex -F"$indexsep" index.db | sed 'N;/<ul>\n<\/ul>/d;P;D' | wraphtml > "$output/index.html"
 
 echo "Generated Website outputted to $output"
 
