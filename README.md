@@ -1,51 +1,37 @@
 # Description
-A simple set of scripts to generate a static site along with an RSS feed.
+A simple and customizable set of scripts to generate a static site along with
+an RSS feed.
 
 # Setup
 Choose one of the following methods to utilize the scripts:
-1. Uncomment `PATH="$PATH:unnamed-ssg"` and move the repository to the directory you want to use it from.
-2. Add the directory to your path. For example, you could add the following to your `.profile`: `export PATH="$PATH:$HOME/.local/share/unnamed-ssg"`.
-3. Use the included makefile to copy files to `/usr/local/bin` by running `make install` as root.
 
-# Usage
+1. Add the directory to your `$PATH`. For example, add the following to your
+   `~/.profile` file:
+```bash
+export PATH="$PATH:$HOME/.local/share/unnamed-ssg"
+```
+2. Use the included makefile to copy files to `/usr/local/bin` by running `make
+   install` as root.
+
 ## Index database
 Create a database file `index.db` with the following syntax:
 ```
-# Lines beginning with # Are ignored
-+Lines beginning with + are made into h3 tags
-# Create entires in the following manner:
-# Date|file|entry title|extra HTML
-2021-04-02|test.pdf|Test file|(More info <a href="https://example.com">here</a>)
-$<p>Lines beginning with
-$<code>$</code>
-$are printed without changing (except the leading $ being removed)</p>
+# Lines beginning with hashtag are ignored
++Lines beginning with a plus sign are made into h3 tags
+$<p>Lines beginning with a dollar sign
+$are printed without any change except the leading
+$dollar sign getting removed</p>
+2021-04-12|file2.html|Another entry|See <a href="https://example.com">this</a> for more info
+2021-04-06|file.html|Test entry|More info <a href="https://example.com">here</a>
 ```
-This will result in the following output:
-```html
-<ul>
-</ul>
-<h3>Lines beginning with + are made into h3 tags</h3>
-<ul>
-<li>
-<b>2021-04-02:</b>
-<a href="test.pdf">Test file</a>
-(More info <a href="https://example.com">here</a>)
-</li>
-</ul>
-<p>Lines beginning with
-<code>$</code>
-are printed without changing (except the leading $ being removed)</p>
-<ul>
-</ul>
-```
-`$indexsep` can be changed in `ssg-build` to use any other field separator than `|`
+`$indexsep` can be changed in `ssg-build` to use any other field separator than `|`.
 
 ## Templates
 ### HTML
-Create a file called `template.html` that will be used as a template for all
-HTML files in the directory. When the pattern `<!--WRAPHTML-->` is matched, the
-HTML file will be appended in the middle of the file. An example template file
-could look like this:
+Create a `template.html` file to be used as a template for all HTML files in
+the directory. When the pattern `<!--WRAPHTML-->` is matched, the HTML file
+will be injected into the file by the `wraphtml` script. An example template
+file could look like this:
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -58,16 +44,15 @@ could look like this:
 	</body>
 </html>
 ```
-The template file used can be changed in `wraphtml` or with the `-t` option.
+The HTML template file used can be changed in `wraphtml` or with the `-t` option. See the
+[Ignored files and exeptions](#ignored-files-and-exeptions) to exclude certain files from this process. The 
 
 ### RSS
-An RSS feed will also be generated and outputted to `rss.xml`.
-If the input file
-(<code>$2</code>)
-is a HTML file, it will be fully included in the feed as
-to make the feed readable from an external feed reader without needing to open
-the file in a web browser. Extra HTML will also be included at the end of the
-feed entry.
+An RSS feed will also be generated and outputted to `rss.xml`. If the input
+file (`$2`) ends with a `.html` extension, it will be fully included in the
+feed as to make it readable from an RSS reader without needing to open the file
+in a web browser. Extra HTML (`$4`) will also be included at the end of the
+feed entry. The template file (`template.xml`) may look like this:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
@@ -80,18 +65,91 @@ feed entry.
 	</channel>
 </rss>
 ```
+The RSS template file used can be changed with the `-t` option in `ssg-build`.
 
-# Website generation
+# Usage
+## Website generation
 Running `ssg-build` will use the other scripts to generate the website in a
 temporary directory. The output directory can be specified using the `-o` flag.
-If the output directory already exists, you will be prompted you want to continue.
-The prompt can be skipped with the `-f` flag.
+If the output directory already exists, you will be prompted you want to
+continue. The prompt can be skipped with the `-f` flag. The following files
+will be generated from the example templates [above](#website-generation):
 
-# Table of contents generator
-Every HTML file will have a table of contents generated as a list and
+`index.html`:
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<h1>Example file</h1>
+		<!--WRAPHTML-->
+		<h3>Lines beginning with a plus sign are made into h3 tags</h3>
+		<p>Lines beginning with a dollar sign
+		are printed without any change except the leading
+		dollar sign getting removed</p>
+		<ul>
+			<li>
+				<b>2021-04-12:</b>
+				<a href="file2.html">Another entry</a>
+				See <a href="https://example.com">this</a> for more info
+			</li>
+			<li>
+				<b>2021-04-06:</b>
+				<a href="file.html">Test entry</a>
+				More info <a href="https://example.com">here</a>
+			</li>
+		</ul>
+	</body>
+</html>
+```
+
+`rss.xml`:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+	<channel>
+		<title>Example feed</title>
+		<link>https://example.com</link>
+		<link rel="stylesheet" href="css/style.css">
+		<description>Example feed</description>
+				<!--WRAPHTML-->
+		<item>
+			<title>Another entry</title>
+			<link>file2.html</link>
+			<guid>file2.html</guid>
+			<pubDate>2021-04-12</pubDate>
+			<description><![CDATA[
+			<a href="file2.html">file2.html</a>
+			See <a href="https://example.com">this</a> for more info
+			]]></description>
+		</item>
+		<item>
+			<title>Test entry</title>
+			<link>file.html</link>
+			<guid>file.html</guid>
+			<pubDate>2021-04-06</pubDate>
+			<description><![CDATA[
+			<a href="file.html">file.html</a>
+			More info <a href="https://example.com">here</a>
+			]]></description>
+		</item>
+	</channel>
+</rss>
+```
+
+**Note:** The generated output (which is added to the template and is not a
+part of it) is not indented, indentation was done afterwards in the examples
+above.
+
+## Table of contents generator
+Every HTML file (except `index.html`) will have a table of contents generated as a list and
 prepend to the beginning of the file. The list will have a class name of "toc"
 (can be changed in `gentoc`) as to make it customizable with CSS. This can be
-disabled by removing `gentoc` from `mvfiles`.
+disabled by removing `gentoc` from `mvfiles`. See [Ignored files and exeptions](#ignored-files-and-exeptions).
+
+An example HTML file:
 ```html
 <h1>Heading 1</h1>
 Lorem ipsum dolor sit amet,
@@ -131,16 +189,27 @@ quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequa
 `gentoc` does not handle indentation. It was done to make afterwards in the example above.
 
 # Ignored files and exeptions
-Special handling for specific files is done through a case statement in `mvfiles`
-(files are not actually moved as the name implies).
+Special handling for specific files is done through a case statement in
+`mvfiles` (the files copied, not moved as the name implies).
 ```bash
-template.*|scripts/*|archive/*) # Globs here are copied without changing
-	cp "$infile" "$outfile"
-	;;
-*.out) # Skipping files
-	continue
-	;;
-*) # The general rule for remaining file types
-	cp "$infile" "$outfile"
-	;;
+# A few variables will be set before the case statement could be usefull incase
+# there are multiple differing file extentiones are in use.
+case
+	# Globs here are copied without changing:
+	template.*|archive/*|examples/test.html)
+		cp "$infile" "$outfile"
+		;;
+	# Skipping files:
+	*.out)
+		continue
+		;;
+	# An example using the aforementioned variables
+	*.md)
+		pandoc "$infile" -o "$basename.html"
+		;;
+	# The general rule for remaining file types
+	*)
+		cp "$infile" "$outfile"
+		;;
+esac
 ```
