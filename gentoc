@@ -31,6 +31,6 @@ cat "${1:--}" | tee "$temp" | tr '\n' ' ' | tr -d '\t' |
 		print "</ol>"
 	}
 
-'
+' | sed 'N;/<ol class="toc">\n<\/ol>/d;P;D'
 cat "$temp"
 rm "$temp"
