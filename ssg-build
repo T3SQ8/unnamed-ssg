@@ -1,11 +1,5 @@
 #!/bin/sh
 
-# The script that utilizes the other scripts to generate a full site. See
-# README for more information.
-# ssg-build [ -f ] [ -o output ]
-
-indexsep="|"
-
 while getopts fo: arg; do
 	case $arg in
 		f) force=1 ;;
@@ -15,7 +9,7 @@ done
 shift $(expr $OPTIND - 1)
 
 if [ -d "$output" ] && [ ! "$force" ]; then
-	printf "'$output' already exists. Do you want to proceed? [y/N] "
+	printf "'%s' already exists. Do you want to proceed? [y/N] " "$output"
 	read -r cont
 	case $cont in
 		y|Y) ;;
@@ -27,13 +21,113 @@ fi
 export output
 
 # Mics
-find -L * -exec mvfiles '{}' +
+find -L . ! -path "./.*" -printf '%P\n' |
+	while read -r infile; do
+		outfile="$output/$infile"
+		outdir=${outfile%/*}
+		basename=${outfile%.*} # Outfile without extention
+		nameonly=${basename##*/} # Without extention or directory path
 
-# RSS
-genrss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
+		[ -z "$infile" ] && continue
+		echo "$infile"
+		[ -d "$infile" ] && mkdir -p "$outfile" && continue
+		# Run specific commands depending on the input files extension.
+		case $infile in
+			template.*|scripts/*|archive/*)
+				cp "$infile" "$outfile"
+				;;
+			#*.jpg|*.png)
+				#	convert "$infile" -strip "$outfile"
+				#	;;
+			*.html)
+				pandoc  -f html -t html --toc --template template.html "$infile" -o "$outfile"
+				;;
+			#*.md)
+				#	pandoc -f gfm -t html "$infile" --toc --template template.html > "$basename.html"
+				#	;;
+			#*.tex)
+				#	pdflatex -output-directory "$outdir" "$infile" > /dev/null 2>&1
+				#	cp "$infile" "$outfile"
+				#	;;
+			*)
+				cp "$infile" "$outfile"
+				;;
+		esac
+	done
 
-# Index
-genindex -F"$indexsep" index.db | sed 'N;/<ul>\n<\/ul>/d;P;D' | wraphtml > "$output/index.html"
+# Generate an RSS feed from an index database.
+awk -F"${indexsep:=|}" '
+BEGIN {
+	print "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+	print "<rss version=\"2.0\">"
+	print "<channel>"
+	print "<title>RSS title</title>"
+	print "<link>https://example.com</link>"
+	print "<description>description</description>"
+}
+
+/^[#+$]|^$/ {next}
+
+{
+	print "<item>"
+	printf "<title>%s</title>\n", $3
+	printf "<link>%s</link>\n", $2
+	printf "<guid>%s</guid>\n", $2
+	printf "<pubDate>%s</pubDate>\n", $1
+	print "<description><![CDATA["
+
+	if (ext[split($2,ext,".")] == "html" && system("test -f " $2)==0)
+		while (getline tmp<$2) {print tmp}
+	else
+		printf "<a href=\"%s\">%s</a>\n", $2, $2
+
+	print $4
+	print "]]></description>"
+	print "</item>"
+}
+
+END {
+	print "</channel>"
+	print "</rss>"
+}' "${index:=index.db}" > "$output/rss.xml"
+
+# Generate an index file from an index database.
+awk -F"$indexsep" '
+BEGIN {
+	print "<ul>"
+}
+
+/^\$/ {
+	print "</ul>"
+	while ($0 ~ /^\$/) {
+		print substr($0, 2)
+		if (getline != 1) break
+	}
+	print "<ul>"
+}
+
+/^#|^$/ { next }
+
+/^\+/ {
+	print "</ul>"
+	printf "<h3>%s</h3>\n", substr($0, 2)
+	print "<ul>"
+	next
+}
+
+{
+	print "<li>"
+	printf "<b>%s:</b>\n", $1
+	printf "<a href=\"%s\">%s</a>\n", $2, $3
+	if ($4) print $4
+	print "</li>"
+}
+
+END {
+	print "</ul>"
+}' "$index" |
+	sed 'N;/<ul>\n<\/ul>/d;P;D' |
+	pandoc -f html -t html --template template.html > "$output/index.html"
 
 echo "Generated Website outputted to $output"
 
