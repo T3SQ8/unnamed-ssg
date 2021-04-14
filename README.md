@@ -29,9 +29,9 @@ $dollar sign getting removed</p>
 ## Templates
 ### HTML
 Create a `template.html` file to be used as a template for all HTML files in
-the directory. When the pattern `<!--WRAPHTML-->` is matched, the HTML file
-will be injected into the file by the `wraphtml` script. An example template
-file could look like this:
+the directory. When the pattern `<!--WRAPHTML-->` is matched on a line by
+itself (indentaion does not matter), the HTML file will be injected into the
+file by the `wraphtml` script. An example template file could look like this:
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -74,7 +74,7 @@ Running `ssg-build` will use the other scripts to generate the website in a
 temporary directory. The output directory can be specified using the `-o` flag.
 If the output directory already exists, you will be prompted you want to
 continue. The prompt can be skipped with the `-f` flag. The following files
-will be generated from the example templates [above](#website-generation):
+will be generated from the example templates [above](#templates):
 
 `index.html`:
 ```html
