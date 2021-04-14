@@ -15,7 +15,7 @@ done
 shift $(expr $OPTIND - 1)
 
 if [ -d "$output" ] && [ ! "$force" ]; then
-	printf "'$output' already exists. Do you want to procede? [y/N] "
+	printf "'$output' already exists. Do you want to proceed? [y/N] "
 	read -r cont
 	case $cont in
 		y|Y) ;;
@@ -41,5 +41,5 @@ echo "Generated Website outputted to $output"
 # # neocites.org using neocities-cli. This is only intended for plaintext files
 # # (such as TeX files) or files without extensions. Please don't use it to dump
 # # files to neocities.
-# find "$output" -type f ! -regex '.*\.asc\|.*\.atom\|.*\.bin\|.*\.css\|.*\.csv\|.*\.dae\|.*\.eot\|.*\.epub\|.*\.geojson\|.*\.gif\|.*\.gltf\|.*\.htm\|.*\.html\|.*\.ico\|.*\.jpeg\|.*\.jpg\|.*\.js\|.*\.json\|.*\.key\|.*\.kml\|.*\.knowl\|.*\.less\|.*\.manifest\|.*\.markdown\|.*\.md\|.*\.mf\|.*\.mid\|.*\.midi\|.*\.mtl\|.*\.obj\|.*\.opml\|.*\.otf\|.*\.pdf\|.*\.pgp\|.*\.png\|.*\.rdf\|.*\.rss\|.*\.sass\|.*\.scss\|.*\.svg\|.*\.text\|.*\.tsv\|.*\.ttf\|.*\.txt\|.*\.webapp\|.*\.webmanifest\|.*\.webp\|.*\.woff\|.*\.woff2\|.*\.xcf\|.*\.xml\|.*\.' -exec mv '{}' '{}.txt' \;
+# find "$output" -type f ! -regex '.*\.\(asc\|atom\|bin\|css\|csv\|dae\|eot\|epub\|geojson\|gif\|gltf\|htm\|html\|ico\|jpeg\|jpg\|js\|json\|key\|kml\|knowl\|less\|manifest\|markdown\|md\|mf\|mid\|midi\|mtl\|obj\|opml\|otf\|pdf\|pgp\|png\|rdf\|rss\|sass\|scss\|svg\|text\|tsv\|ttf\|txt\|webapp\|webmanifest\|webp\|woff\|woff2\|xcf\|xml\)' -exec mv '{}' '{}.txt' \;
 # neocities push "$output"
