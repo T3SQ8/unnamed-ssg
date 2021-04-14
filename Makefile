@@ -30,3 +30,5 @@ link:
 	$(LN) mvfiles $(DEST)
 	$(LN) ssg-build $(DEST)
 	$(LN) wraphtml $(DEST)
+
+.PHONY: install uninstall link
