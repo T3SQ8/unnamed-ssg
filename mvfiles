@@ -21,7 +21,7 @@ for infile do
 		#	convert "$infile" -strip "$outfile"
 		#	;;
 		*.html)
-			gentoc "$infile" | wraphtml > "$outfile"
+			{ gentoc "$infile"; cat "$infile" ;} | wraphtml > "$outfile"
 			;;
 		#*.md)
 		#	pandoc -f gfm -f html "$infile" | gentoc | wraphtml > "$basename.html"
