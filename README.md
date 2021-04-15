@@ -17,10 +17,9 @@ export PATH="$PATH:$HOME/.local/share/unnamed-ssg"
 Create a database file `index.db` with the following syntax:
 ```
 # Lines beginning with hashtag are ignored
-+Lines beginning with a plus sign are made into h3 tags
-$<p>Lines beginning with a dollar sign
-$are printed without any change except the leading
-$dollar sign getting removed</p>
++<p>Lines beginning with a dollar sign
++are printed without any change except the leading
++dollar sign getting removed</p>
 2021-04-12|file.pdf|Another entry|See <a href="https://example.com">this</a> for more info
 2021-04-06|file.html|Test entry|More info <a href="https://example.com">here</a>
 ```

@@ -8,20 +8,11 @@ BEGIN {
 	print "<ul>"
 }
 
-/^\$/ {
-	print "</ul>"
-	while ($0 ~ /^\$/) {
-		print substr($0, 2)
-		if (getline != 1) break
-	}
-	print "<ul>"
-}
-
 /^#|^$/ { next }
 
 /^\+/ {
 	print "</ul>"
-	printf "<h3>%s</h3>\n", substr($0, 2)
+	print substr($0, 2)
 	print "<ul>"
 	next
 }
