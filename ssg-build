@@ -27,7 +27,7 @@ fi
 export output
 
 # Mics
-find -L * -exec mvfiles '{}' +
+find * -exec mvfiles '{}' +
 
 # RSS
 genrss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
