@@ -1,10 +1,90 @@
 #!/bin/sh
 
-# The script that utilizes the other scripts to generate a full site. See
-# README for more information.
-# ssg-build [ -f ] [ -o output ]
+genindex() {
+	awk '
+	BEGIN {
+		print "<ul>"
+	}
+	
+	/^#|^$/ { next }
+	
+	/^\+/ {
+		print "</ul>"
+		print substr($0, 2)
+		print "<ul>"
+		next
+	}
+	
+	{
+		print "<li>"
+		printf "<b>%s:</b>\n", $1
+		printf "<a href=\"%s\">%s</a>\n", $2, $3
+		if ($4) print $4
+		print "</li>"
+	}
+	
+	END {
+		print "</ul>"
+	}'
+}
 
-indexsep="|"
+genrss() {
+	awk '
+	/^[#+]|^$/ {next}
+	
+	{
+		title=$3
+		date=$1
+		file=$2
+		print "<item>"
+		printf "<title>%s</title>\n", title
+		printf "<link>%s</link>\n", file
+		printf "<guid>%s</guid>\n", file
+		printf "<pubDate>%s</pubDate>\n", date
+		print "<description><![CDATA["
+	
+		if (ext[split(file,ext,".")] == "html" && system("test -f " file)==0)
+			while (getline tmp<file) {print tmp}
+		else
+			printf "<a href=\"%s\">%s</a>\n", file, file
+	
+		print $4
+		print "]]></description>"
+		print "</item>"
+	}'
+}
+
+wraphtml() {
+	sed '/^\s*<!--WRAPHTML-->$/r /dev/stdin' "${1:-template.html}"
+}
+
+gentoc() {
+	tr '\n' ' ' | tr -d '\t' |
+		grep -o '<h[1-6][^>]*>[^<]\+</h[1-6]>' |
+		awk -F'</?h[1-6][^>]*>' '
+		BEGIN {
+			print "<ol class=\"toc\">"
+			last_level = 1
+		}
+		
+		{
+			current_level = substr($0, 3, 1) # Get heading size (<hX>)
+			if (! last_level) last_level = current_level
+			diff_level = current_level - last_level
+		
+			if (diff_level != 0) {
+				for (i = 0; i < diff_level; i++) print "<ol>"
+				for (i = 0; i > diff_level; i--) print "</ol>"
+			}
+			printf "<li>%s</li>\n", $2
+			last_level = current_level
+		}
+		
+		END {
+			for (i = 1; i < current_level; i++) print "</ol>"
+			print "</ol>"
+		}'
+}
 
 while getopts fo: arg; do
 	case $arg in
@@ -24,22 +104,44 @@ if [ -d "$output" ] && [ ! "$force" ]; then
 fi
 
 [ "$output" ] || output="$(mktemp -dp /tmp 'ssg-XXXXX')"
-export output
 
-# Mics
-find * -exec mvfiles '{}' +
+find . -mindepth 1 -printf '%P\n' |
+	while read -r infile; do
+		outfile="$output/$infile"
+		outdir=${outfile%/*}
+		basename=${outfile%.*} # Outfile without extention
+		nameonly=${basename##*/} # Without extention or directory path
 
-# RSS
+		echo "$infile"
+		[ -d "$infile" ] && mkdir -p "$outfile" && continue
+
+		# TODO: Add back the removed (comented) commands
+		case $infile in
+			template.*|scripts/*|archive/*)
+				cp "$infile" "$outfile"
+				;;
+			*.html)
+				{ gentoc < "$infile"; cat "$infile" ;} | wraphtml > "$outfile"
+				;;
+			#*.md)
+			#	pandoc -f gfm -f html "$infile" | gentoc | wraphtml > "$basename.html"
+			#	;;
+			*)
+				cp "$infile" "$outfile"
+				;;
+		esac
+	done
+# RSS TODO: check if genrss works
 genrss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
 
-# Index
+# Index TODO: check if genindex works
 genindex -F"$indexsep" index.db | sed 'N;/<ul>\n<\/ul>/d;P;D' | wraphtml > "$output/index.html"
 
 echo "Generated Website outputted to $output"
 
-# This section renames all files in $output and then pushes the files to
-# neocites.org using neocities-cli. This is only intended for plaintext files
-# (such as TeX files) or files without extensions. Please don't use it to dump
-# files to neocities.
-find "$output" -type f ! -regex '.*\.\(asc\|atom\|bin\|css\|csv\|dae\|eot\|epub\|geojson\|gif\|gltf\|htm\|html\|ico\|jpeg\|jpg\|js\|json\|key\|kml\|knowl\|less\|manifest\|markdown\|md\|mf\|mid\|midi\|mtl\|obj\|opml\|otf\|pdf\|pgp\|png\|rdf\|rss\|sass\|scss\|svg\|text\|tsv\|ttf\|txt\|webapp\|webmanifest\|webp\|woff\|woff2\|xcf\|xml\)' -exec mv '{}' '{}.txt' \;
-neocities push "$output"
+# # This section renames all files in $output and then pushes the files to
+# # neocites.org using neocities-cli. This is only intended for plaintext files
+# # (such as TeX files) or files without extensions. Please don't use it to dump
+# # files to neocities.
+# find "$output" -type f ! -regex '.*\.\(asc\|atom\|bin\|css\|csv\|dae\|eot\|epub\|geojson\|gif\|gltf\|htm\|html\|ico\|jpeg\|jpg\|js\|json\|key\|kml\|knowl\|less\|manifest\|markdown\|md\|mf\|mid\|midi\|mtl\|obj\|opml\|otf\|pdf\|pgp\|png\|rdf\|rss\|sass\|scss\|svg\|text\|tsv\|ttf\|txt\|webapp\|webmanifest\|webp\|woff\|woff2\|xcf\|xml\)' -exec mv '{}' '{}.txt' \;
+# neocities push "$output"
