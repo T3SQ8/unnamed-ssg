@@ -1,9 +1,3 @@
-#!/usr/bin/awk -f
-
-# Generate an index file from an index database. Do not forget to set the field
-# separator using the -F flag. See README for more information.
-# genindex -F'|' index.db > index.html
-
 BEGIN {
 	print "<ul>"
 }

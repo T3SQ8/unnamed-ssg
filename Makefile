@@ -1,34 +1,19 @@
-CP = cp -f
-RM = rm -f
-LN = ln -sfr
-chmod = chmod 755
-PREFIX =
-DEST = $(DESTDIR)/usr/local/bin
+FS = |
+htmltemp = template.html
+mdfiles = $(wildcard *.md)
 
-install:
-	mkdir -p $(DEST)
-	$(CP) genindex $(DEST)
-	$(CP) genrss $(DEST)
-	$(CP) gentoc $(DEST)
-	$(CP) mvfiles $(DEST)
-	$(CP) ssg-build $(DEST)
-	$(CP) wraphtml $(DEST)
+md = pandoc -f gfm -t html --toc --template $(htmltemp)
+html = pandoc -f html -t html --toc --template $(htmltemp)
+genrss = awk -F'$(FS)' -f genrss.awk
+genindex = awk -F'$(FS)' -f genindex.awk
 
-uninstall:
-	$(RM) $(DEST)/genindex 
-	$(RM) $(DEST)/genrss 
-	$(RM) $(DEST)/gentoc 
-	$(RM) $(DEST)/mvfiles 
-	$(RM) $(DEST)/ssg-build 
-	$(RM) $(DEST)/wraphtml 
+all: $(patsubst %.md,%.html,$(mdfiles)) index.html rss.xml
 
-link:
-	mkdir -p $(DEST)
-	$(LN) genindex $(DEST)
-	$(LN) genrss $(DEST)
-	$(LN) gentoc $(DEST)
-	$(LN) mvfiles $(DEST)
-	$(LN) ssg-build $(DEST)
-	$(LN) wraphtml $(DEST)
+%.html: %.md
+	$(md) $< > $@
 
-.PHONY: install uninstall link
+index.html: index.db
+	$(genindex) $< | $(html) > $@
+
+rss.xml: index.db
+	$(genrss) $< > $@
