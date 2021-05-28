@@ -36,10 +36,3 @@ genrss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
 genindex -F"$indexsep" index.db | sed 'N;/<ul>\n<\/ul>/d;P;D' | wraphtml > "$output/index.html"
 
 echo "Generated Website outputted to $output"
-
-# This section renames all files in $output and then pushes the files to
-# neocites.org using neocities-cli. This is only intended for plaintext files
-# (such as TeX files) or files without extensions. Please don't use it to dump
-# files to neocities.
-find "$output" -type f ! -regex '.*\.\(asc\|atom\|bin\|css\|csv\|dae\|eot\|epub\|geojson\|gif\|gltf\|htm\|html\|ico\|jpeg\|jpg\|js\|json\|key\|kml\|knowl\|less\|manifest\|markdown\|md\|mf\|mid\|midi\|mtl\|obj\|opml\|otf\|pdf\|pgp\|png\|rdf\|rss\|sass\|scss\|svg\|text\|tsv\|ttf\|txt\|webapp\|webmanifest\|webp\|woff\|woff2\|xcf\|xml\)' -exec mv '{}' '{}.txt' \;
-neocities push "$output"
