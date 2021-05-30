@@ -49,7 +49,7 @@ while getopts t:R: arg; do
 done
 shift $(expr $OPTIND - 1)
 
-sed "/${regex:-'^\s*<!--WRAPHTML-->$'}/r ${1:-/dev/stdin}" "${template:-template.html}"
+sed "/${regex:-^\s*<!--WRAPHTML-->$}/r ${1:-/dev/stdin}" "${template:-template.html}"
 }
 
 dirindex() {
