@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. ssg-build
+. ../ssg-build
 
 genrss index.rec \
 	'Unnamed blog' \
