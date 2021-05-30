@@ -54,6 +54,10 @@ sed "/${regex:-^\s*<!--WRAPHTML-->$}/r ${1:-/dev/stdin}" "${template:-template.h
 
 dirindex() {
 for path do
-	find "$path" -type f -printf '<li><a href="%P">%P</a></li>\n'
+	find "$path" -type f -printf '<li><a href="%p">%p</a></li>\n'
 done
+}
+
+markdown2html() {
+pandoc -f gfm -t html "${1:--}"
 }

@@ -14,4 +14,4 @@ dirindex archive > archiveindex.html
 
 wraphtml in_html.html > out_html.html
 
-pandoc -f gfm -f html in_markdown.md | wraphtml > out_markdown.html
+markdown2html in_markdown.md | wraphtml > out_markdown.html
