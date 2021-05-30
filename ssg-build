@@ -1,38 +1,59 @@
 #!/bin/sh
 
-# The script that utilizes the other scripts to generate a full site. See
-# README for more information.
-# ssg-build [ -f ] [ -o output ]
+genindex() { # 1: input
+echo "<ul>"
+recfmt '
+<li>
+<b>{{Date}}</b>:
+<a href="{{File}}">{{Name}}</a>
+{{Extra}}
+</li>
+' < "$1"
+echo "</ul>"
+}
 
-indexsep="|"
+genrss() { # 1: input 2: title 3: url 4: description
+cat <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+<channel>
+<title>$2</title>
+<link>$3</link>
+<description>$4</description>
+EOF
+recfmt '
+<item>
+<title>{{Name}}</title>
+<link>{{File}}</link>
+<guid>{{File}}</guid>
+<pubDate>{{Date}}</pubDate>
+<description><![CDATA[
+<a href="{{File}}">{{Name}}</a>
+{{Extra}}
+]]></description>
+</item>
+' < "$1"
+cat <<EOF
+</channel>
+</rss>
+EOF
+}
 
-while getopts fo: arg; do
+wraphtml() { # 1: <input> 2: -t <template> (default `template.html`)
+while getopts t:R: arg; do
 	case $arg in
-		f) force=1 ;;
-		o) output=$OPTARG;;
+		t) template=$OPTARG;;
+		R) regex=$OPTARG;;
+		\?|*) exit 1;;
 	esac
 done
 shift $(expr $OPTIND - 1)
 
-if [ -d "$output" ] && [ ! "$force" ]; then
-	printf "'$output' already exists. Do you want to proceed? [y/N] "
-	read -r cont
-	case $cont in
-		y|Y) ;;
-		*) exit;;
-	esac
-fi
+sed "/${regex:-'^\s*<!--WRAPHTML-->$'}/r ${1:-/dev/stdin}" "${template:-template.html}"
+}
 
-[ "$output" ] || output="$(mktemp -dp /tmp 'ssg-XXXXX')"
-export output
-
-# Mics
-find * -exec mvfiles '{}' +
-
-# RSS
-genrss -F"$indexsep" index.db | wraphtml -t template.xml > "$output/rss.xml"
-
-# Index
-genindex -F"$indexsep" index.db | sed 'N;/<ul>\n<\/ul>/d;P;D' | wraphtml > "$output/index.html"
-
-echo "Generated Website outputted to $output"
+dirindex() {
+for path do
+	find "$path" -type f -printf '<li><a href="%P">%P</a></li>\n'
+done
+}
