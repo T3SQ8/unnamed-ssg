@@ -44,8 +44,11 @@ wraphtml <input> [ -t <template> ] [ -R <regex> ]
 # the -t flag (default: template.html).
 wraphtml file1.html -t template.html -R '^\s*<!--WRAPHTML-->$' > file2.html
 
-dirindex <path>
-# Generates an HTML list of all files in a directory.
+dirindex [ -s <format> ] <path>
+# Generates an HTML list of all files in a directory. The -s flag can be used
+# to change the format which the output is printed in
+# (default: <li><a href=\"%p\">%p</a></li>\n). View the printf format section
+# under in the find manpage (Run: man find) for more information on the formats
 dirindex archive > archiveindex.html
 
 markdown2html <input>
