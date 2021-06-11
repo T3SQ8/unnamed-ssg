@@ -13,6 +13,13 @@ echo "</ul>"
 }
 
 genrss() {
+while getopts i flag; do
+	case $flag in
+		i) inject=1;;
+	esac
+done
+shift "$((OPTIND - 1))"
+
 cat <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
@@ -21,6 +28,28 @@ cat <<EOF
 <link>$3</link>
 <description>$4</description>
 EOF
+
+if [ "$inject" ]; then
+sed 's/^File: \//File: /' index.rec | awk '
+/^File:.*\.html/ {
+	print "Contents:"
+	print system("sed s/^/+/ " $2) > "/dev/null"
+}
+{ print }
+' | recfmt '
+<item>
+<title>{{Name}}</title>
+<link>{{File}}</link>
+<guid>{{File}}</guid>
+<pubDate>{{Date}}</pubDate>
+<description><![CDATA[
+<a href="{{File}}">{{Name}}</a>
+{{Extra}}
+{{Contents}}
+]]></description>
+</item>
+'
+else
 recfmt '
 <item>
 <title>{{Name}}</title>
@@ -33,6 +62,9 @@ recfmt '
 ]]></description>
 </item>
 ' < "$1"
+
+fi
+
 cat <<EOF
 </channel>
 </rss>

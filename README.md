@@ -29,9 +29,11 @@ genindex <index_database>
 # Generates an index HTML file from the Recutils database.
 genindex index.rec > index.html
 
-genrss <index_database> <title> <url> <description>
-# Generates an RSS feed from the Recutils database.
-genrss index.rec \
+genrss [ -i ] <index_database> <title> <url> <description>
+# Generates an RSS feed from the Recutils database. The -i flag will embed HTML
+# files into the RSS feed, but doing this will also remove the leading '/' in
+# absoulte paths.
+genrss -i index.rec \
 	'My RSS feed' \
 	'https://www.example.com' \
 	'Random Description' \
