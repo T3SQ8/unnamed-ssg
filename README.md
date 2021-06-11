@@ -56,6 +56,11 @@ dirindex archive > archiveindex.html
 markdown2html <input>
 # Converts a markdown file to HTML.
 markdown2html file.md > file.html
+
+gentoc <input>
+# Generate a table of contents in the form of an HTML list. The outermost <ol>
+# tag will have the 'toc' class so it can be customized with CSS.
+{ gentoc file1.html; cat file1.html ;} > file2.html
 ```
 
 # Example
