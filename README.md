@@ -29,19 +29,26 @@ genindex <index_database>
 # Generates an index HTML file from the Recutils database.
 genindex index.rec > index.html
 
-genrss [ -i ] <index_database> <title> <url> <description>
-# Generates an RSS feed from the Recutils database. The -i flag will embed HTML
-# files into the RSS feed, but doing this will also remove the leading '/' in
-# absoulte paths.
-genrss -i index.rec \
-	'My RSS feed' \
-	'https://www.example.com' \
-	'Random Description' \
+genrss [ -t <title> ] [ -u <url> ] [ -d <description> ] <index_database>
+# Generates an RSS feed from the Recutils database.
+# Miscellaneous metadata can be set using the -t, -u and -d
+# flags. Leaving these entries empty will fill them with generic
+# data.
+genrss index.rec \
+	-t 'My RSS feed' \
+	-u 'https://www.example.com' \
+	-d 'Random Description' \
 	> rss.xml
 
+injectindex <index_database>
+# Adds the contents of HTML files into the Recutils database under the
+# "Contents" field. This can be useful if you want your RSS feed to be readable
+# from within the feed reader.
+injectindex index.rec | genrss > rss.xml
+
 wraphtml <input> [ -t <template> ] [ -R <regex> ]
-# Surounds the input file with the template file and then prints the file. The
-# Regex which it replaces inside the template can be changes using the -R flag
+# Surrounds the input file with the template file and then prints the file. The
+# Regexp which it replaces inside the template can be changes using the -R flag
 # (default: ^\s*<!--WRAPHTML-->$). The template file used can be changed with
 # the -t flag (default: template.html).
 wraphtml file1.html -t template.html -R '^\s*<!--WRAPHTML-->$' > file2.html
@@ -72,8 +79,3 @@ cd example
 sh example.sh
 xdg-open index.html
 ```
-
-<!-- TODO
-Script to detect non absolute path images
-Redo gentoc
---> 

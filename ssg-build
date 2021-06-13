@@ -8,35 +8,39 @@ recfmt '
 <a href="{{File}}">{{Name}}</a>
 {{Extra}}
 </li>
-' < "$1"
+' < "${1:-/dev/stdin}"
 echo "</ul>"
 }
 
-genrss() {
-while getopts i flag; do
-	case $flag in
-		i) inject=1;;
-	esac
-done
-shift "$((OPTIND - 1))"
-
-cat <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-<channel>
-<title>$2</title>
-<link>$3</link>
-<description>$4</description>
-EOF
-
-if [ "$inject" ]; then
-sed 's/^File: \//File: /' index.rec | awk '
+injectindex() {
+sed 's/^File: \//File: /' "${1:-/dev/stdin}" | awk '
 /^File:.*\.html/ {
 	print "Contents:"
 	print system("sed s/^/+/ " $2) > "/dev/null"
 }
 { print }
-' | recfmt '
+'
+}
+
+genrss() {
+while getopts t:u:d: flag; do
+	case $flag in
+		t) title=$OPTARG;;
+		u) url=$OPTARG;;
+		d) description=$OPTARG;;
+	esac
+done
+shift "$((OPTIND - 1))"
+cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>${title:-Title}</title>
+<link>${url:-url}</link>
+<description>${description:-description}</description>
+EOF
+
+recfmt '
 <item>
 <title>{{Name}}</title>
 <link>{{File}}</link>
@@ -48,22 +52,7 @@ sed 's/^File: \//File: /' index.rec | awk '
 {{Contents}}
 ]]></description>
 </item>
-'
-else
-recfmt '
-<item>
-<title>{{Name}}</title>
-<link>{{File}}</link>
-<guid>{{File}}</guid>
-<pubDate>{{Date}}</pubDate>
-<description><![CDATA[
-<a href="{{File}}">{{Name}}</a>
-{{Extra}}
-]]></description>
-</item>
-' < "$1"
-
-fi
+' < "${1:-/dev/stdin}"
 
 cat <<EOF
 </channel>
@@ -98,7 +87,7 @@ done
 }
 
 markdown2html() {
-pandoc -f gfm -t html "${1:--}"
+pandoc -f gfm -t html "${1:-/dev/stdin}"
 }
 
 relpath() {
