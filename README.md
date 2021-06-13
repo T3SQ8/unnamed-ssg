@@ -70,6 +70,14 @@ gentoc <input>
 { gentoc file1.html; cat file1.html ;} > file2.html
 ```
 
+# Splitting functions into files
+The provided `splitfunc.awk` script will split the functions inside `ssg-build`
+into separate files for use where shell functions are accessible. For example
+in a `Makefile` or when using `xargs`.
+```bash
+./splitfunc.awk ssg-build
+```
+
 # Example
 To view a demonstration of the included functions. `cd` in the `example`
 directory and run the `example.sh` script. Then open the newly generated

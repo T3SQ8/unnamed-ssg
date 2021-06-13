@@ -14,11 +14,11 @@ echo "</ul>"
 
 injectindex() {
 sed 's/^File: \//File: /' "${1:-/dev/stdin}" | awk '
-/^File:.*\.html/ {
-	print "Contents:"
-	print system("sed s/^/+/ " $2) > "/dev/null"
-}
-{ print }
+	/^File:.*\.html/ {
+		print "Contents:"
+		print system("sed s/^/+/ " $2) > "/dev/null"
+	}
+	{ print }
 '
 }
 
@@ -70,7 +70,8 @@ while getopts t:R: arg; do
 done
 shift $(expr $OPTIND - 1)
 
-sed "/${regex:-^\s*<!--WRAPHTML-->$}/r ${1:-/dev/stdin}" "${template:-template.html}"
+sed "/${regex:-^\s*<!--WRAPHTML-->$}/r ${1:-/dev/stdin}" \
+	"${template:-template.html}"
 }
 
 dirindex() {
@@ -103,28 +104,29 @@ gentoc() {
 file=$(tr '\n' ' ' < "${1:-/dev/stdin}" | tr -d '\t' | grep -o '<h[1-6][^>]*>[^<]\+</h[1-6]>')
 if [ -n "$file" ]; then
 awk -F'</?h[1-6][^>]*>' '
-BEGIN {
-	print "<ol class=\"toc\">"
-	last_level = 1
-}
-
-{
-	current_level = substr($0, 3, 1) # Get heading size (<hX>)
-	if (! last_level) last_level = current_level
-	diff_level = current_level - last_level
-
-	if (diff_level != 0) {
-		for (i = 0; i < diff_level; i++) print "<ol>"
-		for (i = 0; i > diff_level; i--) print "</ol>"
+	BEGIN {
+		print "<ol class=\"toc\">"
+		last_level = 1
 	}
-	printf "<li>%s</li>\n", $2
-	last_level = current_level
-}
 
-END {
-	for (i = 1; i < current_level; i++) print "</ol>"
-	print "</ol>"
-}' <<EOF
+	{
+		current_level = substr($0, 3, 1) # Get heading size (<hX>)
+		if (! last_level) last_level = current_level
+		diff_level = current_level - last_level
+
+		if (diff_level != 0) {
+			for (i = 0; i < diff_level; i++) print "<ol>"
+			for (i = 0; i > diff_level; i--) print "</ol>"
+		}
+		printf "<li>%s</li>\n", $2
+		last_level = current_level
+	}
+
+	END {
+		for (i = 1; i < current_level; i++) print "</ol>"
+		print "</ol>"
+	}
+' <<EOF
 $file
 EOF
 fi

@@ -5,3 +5,11 @@ out_html.html
 out_markdown.html
 headers.html
 README.html
+dirindex
+genindex
+genrss
+gentoc
+injectindex
+markdown2html
+relpath
+wraphtml
