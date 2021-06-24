@@ -1,4 +1,5 @@
-A simple POSIX shell "library" for generating websites and RSS feeds.
+A simple POSIX shell "library" for generating websites and RSS feeds using GNU
+Recutils.
 
 # Dependencies
 - [GNU Recutils](https://www.gnu.org/software/recutils)
@@ -87,3 +88,6 @@ cd example
 sh example.sh
 xdg-open index.html
 ```
+This will generate and index HTML file and an RSS feed from the Recutils
+database (`index.rec`) along with some other files to demonstrate availabe
+functions.

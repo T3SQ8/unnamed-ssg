@@ -1,3 +1,8 @@
+%rec: Files
+%mandatory: Date File Name
+%allowed: Extra
+%doc: A list of some example files
+
 Date: 2021-06-11
 File: headers.html
 Name: Headers
@@ -21,4 +26,4 @@ Name: RSS feed
 
 Date: 2021-05-30
 File: template.html
-Name: The template used for this website:
+Name: The template used for this website
