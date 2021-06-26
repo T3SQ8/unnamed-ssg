@@ -2,13 +2,13 @@
 
 genindex() {
 echo "<ul>"
-recfmt '
+recsel "${1:-/dev/stdin}" | recfmt '
 <li>
 <b>{{Date}}:</b>
 <a href="{{File}}">{{Name}}</a>
 {{Extra}}
 </li>
-' < "${1:-/dev/stdin}"
+'
 echo "</ul>"
 }
 
@@ -40,7 +40,7 @@ cat <<EOF
 <description>${description:-description}</description>
 EOF
 
-recfmt '
+recsel "${1:-/dev/stdin}" | recfmt '
 <item>
 <title>{{Name}}</title>
 <link>{{File}}</link>
