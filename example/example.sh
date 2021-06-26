@@ -12,7 +12,7 @@ markdown2html in_markdown.md | wraphtml > out_markdown.html
 
 markdown2html headers.md | { gentoc; markdown2html headers.md ;} | wraphtml > headers.html
 
-injectindex index.rec | genrss \
+genrss index.rec \
 	-t 'Unnamed blog' \
 	-u 'https://www.example.com' \
 	-d 'My new unnamed personal blog' \

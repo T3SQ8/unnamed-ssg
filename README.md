@@ -30,22 +30,20 @@ genindex <index_database>
 # Generates an index HTML file from the Recutils database.
 genindex index.rec > index.html
 
-genrss [ -t <title> ] [ -u <url> ] [ -d <description> ] <index_database>
-# Generates an RSS feed from the Recutils database.
-# Miscellaneous metadata can be set using the -t, -u and -d
-# flags. Leaving these entries empty will fill them with generic
-# data.
-genrss index.rec \
+genrss [ -i ] [ -t <title> ] [ -u <url> ] [ -d <description> ]  <index_database>
+# Generates an RSS feed from the Recutils database. Using the -i option will
+# include the contents of HTML files in the generated RSS feed (Note that this
+# will convert absolute file paths to relative paths). Miscellaneous metadata
+# can be set using the -t, -u and -d flags. Leaving these entries empty will
+# fill them with generic data.
+genrss index.rec -i \
 	-t 'My RSS feed' \
 	-u 'https://www.example.com' \
 	-d 'Random Description' \
 	> rss.xml
 
 injectindex <index_database>
-# Adds the contents of HTML files into the Recutils database under the
-# "Contents" field. This can be useful if you want your RSS feed to be readable
-# from within the feed reader.
-injectindex index.rec | genrss > rss.xml
+# [Depreciated] Left for compatibility. Now runs 'genrss -i'.
 
 wraphtml <input> [ -t <template> ] [ -R <regex> ]
 # Surrounds the input file with the template file and then prints the file. The
