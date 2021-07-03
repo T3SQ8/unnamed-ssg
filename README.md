@@ -78,14 +78,5 @@ in a `Makefile` or when using `xargs`.
 ```
 
 # Example
-To view a demonstration of the included functions. `cd` in the `example`
-directory and run the `example.sh` script. Then open the newly generated
-`index.html` file.
-```bash
-cd example
-sh example.sh
-xdg-open index.html
-```
-This will generate and index HTML file and an RSS feed from the Recutils
-database (`index.rec`) along with some other files to demonstrate availabe
-functions.
+To view a demonstration of the available functions, run the `example.sh` script,
+then open the newly generated `index.html` file.
