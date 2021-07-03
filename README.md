@@ -26,8 +26,9 @@ of the following commands:
 
 This will give you access to the following functions:
 ```bash
-genindex <index_database>
+genindex [ -t <template> ] <index_database>
 # Generates an index HTML file from the Recutils database.
+# Using the -t flag changes the template given to 'recfmt'.
 genindex index.rec > index.html
 
 genrss [ -i ] [ -t <title> ] [ -u <url> ] [ -d <description> ]  <index_database>

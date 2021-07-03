@@ -1,14 +1,23 @@
 #!/bin/sh
 
 genindex() {
-echo "<ul>"
-recsel "${1:-/dev/stdin}" | recfmt '
+while getopts t: flag; do
+	case $flag in
+		t) template=$OPTARG;;
+	esac
+done
+shift "$((OPTIND - 1))"
+
+[ "$template" ] || template='
 <li>
 <b>{{Date}}:</b>
 <a href="{{File}}">{{Name}}</a>
 {{Extra}}
 </li>
 '
+
+echo "<ul>"
+recsel "${1:-/dev/stdin}" | recfmt "$template"
 echo "</ul>"
 }
 
