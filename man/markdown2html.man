@@ -1,0 +1,20 @@
+.TH MARKDOWN2HTML 1 2021-07-05
+
+.SH NAME
+markdown2html \- markdown to HTML
+
+.SH SYNOPSIS
+markdown2html \fIFILE\fR
+
+.SH DESCRIPTION
+\fBmarkdown2html\fR converts a markdown file to HTML using pandoc.
+
+.SH SEE ALSO
+\fBpandoc\fR(1)
+
+\fBdirindex\fR(1),
+\fBgenindex\fR(1),
+\fBgenrss\fR(1),
+\fBgentoc\fR(1),
+\fBssg-build\fR(1),
+\fBwraphtml\fR(1).

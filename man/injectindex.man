@@ -1,0 +1,11 @@
+.TH INJECTINDEX 1 2021-07-05
+
+.SH NAME
+injectindex \- inject into index
+
+.SH SYNOPSIS
+injectindex \fIFILE\fR
+
+.SH DESCRIPTION
+\fBinjectindex\fR is Depreciated (left for compatibility).
+Now runs 'genrss -i'.

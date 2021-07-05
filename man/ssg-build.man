@@ -1,0 +1,19 @@
+.TH SSG-BUILD 1 2021-07-05
+
+.SH NAME
+ssg-build \- static site generator (build)
+
+.SH DESCRIPTION
+\fBssg-build\fR is a simple POSIX shell "library" for generating websites and
+RSS feeds using GNU Recutils.
+
+.SH SEE ALSO
+.B info recutils
+
+\fBdirindex\fR(1),
+\fBgenindex\fR(1),
+\fBgenrss\fR(1),
+\fBgentoc\fR(1),
+\fBmarkdown2html\fR(1),
+\fBssg-build\fR(1),
+\fBwraphtml\fR(1).

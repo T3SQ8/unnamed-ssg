@@ -1,0 +1,41 @@
+.TH WRAPHTML 1 2021-07-05
+
+.SH NAME
+wraphtml \- wrap html input in a template
+
+.SH SYNOPSIS
+wraphtml
+[\fB\-t\fR \fITEMPLATE\fR]
+[\fB\-R\fR \fIREGEXP\fR]
+\fIFILE\fR
+
+.SH DESCRIPTION
+\fBwraphtml\fR surrounds the input file with a template file and then prints
+the file. It is done through a HTML comment in the template file which tells
+wraphtml where to put the input file.
+
+.SH OPTIONS
+
+.TP
+.BI "\-R" " \fIREGEXP\fR"
+Changes the regular expression which tells "sed" where the input should be
+located in the template file. Default: "^\\s*<!--WRAPHTML-->$"
+
+.TP
+.BI "\-t" " \fITEMPLATE\fR"
+The template file used by wraphtml. Default: "template.html".
+
+.SH EXAMPLE(S)
+.EX
+wraphtml file1.html -t tmpl.html -R '^\\s*<!--INSERT-->$' > file2.html
+.EE
+
+.SH SEE ALSO
+\fBsed\fR(1)
+
+\fBdirindex\fR(1),
+\fBgenindex\fR(1),
+\fBgenrss\fR(1),
+\fBgentoc\fR(1),
+\fBmarkdown2html\fR(1),
+\fBssg-build\fR(1).

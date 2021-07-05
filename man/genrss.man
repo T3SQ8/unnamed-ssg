@@ -1,0 +1,44 @@
+.TH GENRSS 1 2021-07-05
+.SH NAME
+genrss \- generate RSS feed
+.SH SYNOPSIS
+genrss [\fB\-i\fR]
+[\fB\-t\fR \fITITLE\fR]
+[\fB\-u\fR \fIURL\fR]
+[\fB\-d\fR \fIDESCRIPTION\fR]
+\fIFILE\fR
+.SH DESCRIPTION
+Generates an RSS feed in XML format from a Recutils database.
+
+.SH OPTION
+
+.TP
+.BI "\-d" " \fIDESCRIPTION\fR"
+\fBgenrss\fR A description for the generated RSS feed. Default: "description"
+
+.TP
+.BI "\-i"
+Include the contents of HTML files in the generated RSS feed, making the file
+readable from an RSS feed reader directly (Note that this will convert absolute
+file paths to relative paths).
+
+.TP
+.BI "\-t" " \fITITLE\fR"
+A title for the generated RSS feed. Default: "title"
+
+.TP
+.BI "\-u" " \fIURL\fR"
+A url for the homepage of the generated RSS feed. Default: "url"
+
+.SH EXAMPLE(S)
+.EX
+genrss -i -t 'My RSS feed' -u 'https://www.example.com' -d 'Random Description' index.rec > rss.xml
+.EE
+
+.SH SEE ALSO
+\fBdirindex\fR(1),
+\fBgenindex\fR(1),
+\fBgentoc\fR(1),
+\fBmarkdown2html\fR(1),
+\fBssg-build\fR(1),
+\fBwraphtml\fR(1).
