@@ -6,9 +6,4 @@ relpath  \fIPATH\fR [\fIPATH\fR...]
 .SH DESCRIPTION
 \fBrelpath\fR warns about non relative paths in HTML files.
 .SH SEE ALSO
-\fBdirindex\fR(1),
-\fBgenindex\fR(1),
-\fBgenrss\fR(1),
-\fBgentoc\fR(1),
-\fBmarkdown2html\fR(1),
-\fBwraphtml\fR(1).
+\fBssg-build\fR(1).

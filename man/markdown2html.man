@@ -10,11 +10,5 @@ markdown2html \fIFILE\fR
 \fBmarkdown2html\fR converts a markdown file to HTML using pandoc.
 
 .SH SEE ALSO
-\fBpandoc\fR(1)
-
-\fBdirindex\fR(1),
-\fBgenindex\fR(1),
-\fBgenrss\fR(1),
-\fBgentoc\fR(1),
-\fBssg-build\fR(1),
-\fBwraphtml\fR(1).
+\fBpandoc\fR(1),
+\fBssg-build\fR(1).

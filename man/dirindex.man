@@ -21,12 +21,5 @@ dirindex -s '<li><a href=\\"%p\\">%f</a></li>' archive > archiveindex.html
 .EE
 
 .SH SEE ALSO
-\fBfind\fR(1)
-
-\fBdirindex\fR(1),
-\fBgenindex\fR(1),
-\fBgenrss\fR(1),
-\fBgentoc\fR(1),
-\fBmarkdown2html\fR(1),
-\fBssg-build\fR(1),
-\fBwraphtml\fR(1).
+\fBfind\fR(1),
+\fBssg-build\fR(1).

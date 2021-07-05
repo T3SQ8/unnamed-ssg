@@ -36,11 +36,5 @@ genindex -t '
 .EE
 
 .SH SEE ALSO
-\fBrecfmt\fR(1)
-
-\fBdirindex\fR(1),
-\fBgenrss\fR(1),
-\fBgentoc\fR(1),
-\fBmarkdown2html\fR(1),
-\fBssg-build\fR(1),
-\fBwraphtml\fR(1).
+\fBrecfmt\fR(1),
+\fBssg-build\fR(1).

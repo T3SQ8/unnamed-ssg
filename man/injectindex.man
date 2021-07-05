@@ -9,3 +9,6 @@ injectindex \fIFILE\fR
 .SH DESCRIPTION
 \fBinjectindex\fR is Depreciated (left for compatibility).
 Now runs 'genrss -i'.
+
+.SH SEE ALSO
+\fBssg-build\fR(1).

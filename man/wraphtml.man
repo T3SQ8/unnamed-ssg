@@ -31,11 +31,5 @@ wraphtml file1.html -t tmpl.html -R '^\\s*<!--INSERT-->$' > file2.html
 .EE
 
 .SH SEE ALSO
-\fBsed\fR(1)
-
-\fBdirindex\fR(1),
-\fBgenindex\fR(1),
-\fBgenrss\fR(1),
-\fBgentoc\fR(1),
-\fBmarkdown2html\fR(1),
+\fBsed\fR(1),
 \fBssg-build\fR(1).
