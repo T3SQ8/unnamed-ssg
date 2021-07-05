@@ -30,9 +30,10 @@ man man/<file>
 # Splitting functions into files
 The provided `splitfunc.awk` script will split the functions inside `ssg-build`
 into separate files for use where shell functions are accessible. For example
-in a `Makefile` or when using `xargs`.
+in a `Makefile` or when using `xargs`. You can either split the functions and
+manage them manually or use the provided command in the makefile.
 ```bash
-./splitfunc.awk ssg-build
+man install_split
 ```
 
 # Example
