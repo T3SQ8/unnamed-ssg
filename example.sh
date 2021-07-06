@@ -3,6 +3,8 @@
 # After running this script, open the 'index.html' file in a
 # webbrowser.
 
+# This section genrates the files used in the example, no commands specific to
+# ssg-build are actully run until it is sourced bellow.
 cat > template.html <<EOF
 <!DOCTYPE html>
 <html lang="en">
