@@ -107,7 +107,95 @@ done
 }
 
 markdown2html() {
-pandoc -f gfm -t html "${1:-/dev/stdin}"
+awk '
+	# TODO: Paragraph tags.
+	# TODO: Multiple of the same tag on the same line.
+	# TODO: Formatting tags in lists and blockquotes.
+
+	/^---$/ {
+		print "<hr/>"; next
+	}
+
+	/\*\*.+\*\*/ { # Bold
+		sub(/\*\*/, "<b>")
+		sub(/\*\*/, "</b>")
+	}
+
+	/\*.+\*/ { # Italics
+		sub(/\*/, "<i>")
+		sub(/\*/, "</i>")
+	}
+
+	/`.+`/ { # Code
+		sub(/`/, "<code>")
+		sub(/`/, "</code>")
+	}
+
+	/^#{1,6}\s/ { # Headings
+		hsize = "h" length($1)
+		$1 = ""
+		sub(/^\s/, "")
+		printf "<%s>%s</%s>\n", hsize, $0, hsize
+		next
+	}
+
+	/!\[[a-zA-Z ]+\]\(.+\)/ { # Images (figures)
+		sub(/!\[/, "")
+		sub(/]\(/, " ")
+		sub(/)/, "")
+		url=$NF
+		$NF = ""
+		sub(/\s$/, "")
+		printf "<figure><img src=\"%s\" alt=\"%s\"/><figurecaption>%s</figurecaption></figure>\n", url, url, $0
+		next
+	}
+
+	/\[[a-zA-Z ]+\]\(.+\)/ { # Urls
+		sub(/\[/, "")
+		sub(/]\(/, " ")
+		sub(/)/, "")
+		url=$NF
+		$NF = ""
+		sub(/\s$/, "")
+		printf "<a href=\"%s\">%s</a>\n", url, $0
+		next
+	}
+
+	/^[0-9]\.\s/ { # Ordered lists
+		print "<ol>"
+		while ($0 !~ /^$/) {
+			$1=""
+			sub(/^\s/, "")
+			printf "<li>%s</li>\n", $0
+			getline
+		}
+		print "</ol>"
+	}
+
+	/^[-*]\s/ { # Unordered lists
+		print "<ul>"
+		while ($0 !~ /^$/) {
+			$1=""
+			sub(/^\s/, "")
+			printf "<li>%s</li>\n", $0
+			getline
+		}
+		print "</ul>"
+	}
+
+	/^>\s/ { # Blockquotes
+		print "<blockquote>"
+		while ($0 !~ /^$/) {
+			$1=""
+			sub(/^\s/, "")
+			print
+			getline
+		}
+		print "</blockquote>"
+	}
+
+	{ print }
+' < "${1:-/dev/stdin}"
 }
 
 relpath() {

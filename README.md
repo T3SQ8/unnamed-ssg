@@ -3,7 +3,7 @@ Recutils.
 
 # Dependencies
 - [GNU Recutils](https://www.gnu.org/software/recutils)
-- [Pandoc](https://pandoc.org/) (If using markdown)
+- Core utilities
 
 # Installation
 Copy the `ssg-build` to your `$PATH` or use the included `Makefile` if you
