@@ -50,11 +50,14 @@ recsel "${1:-/dev/stdin}" | {
 	# running through the pipline using sed and awk. If not, the contents
 	# will be sent to cat, which hands it over without modification.
 	[ "$inject" ] && {
-		sed 's/^File: \//File: /' "${1:-/dev/stdin}" | awk '
-			/^File:.*\.html/ {
+		awk '
+			/^File:.*\.html$/ {
+				src = $0
+				sub(/^File:\s\/?/, "", src)
 				print "Contents:"
-				print system("sed s/^/+/ " $2) > "/dev/null"
+				print system("sed s/^/+/ " src) > "/dev/null"
 			}
+			
 			{ print }
 		'
 	} || cat
