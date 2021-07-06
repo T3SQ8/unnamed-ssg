@@ -203,10 +203,8 @@ awk '
 
 relpath() {
 for dir do
-	find "$dir" -type f -name '*.html' |
-	while read -r file; do
-		grep "\(src\|href\)=[\"'][^/]" "$file" | grep -v "\(src\|href\)=[\"']\w\+://"
-	done
+	find "$dir" -type f -name '*.html' \
+		-exec grep -HP "(src|href)=[\"'][^/](?!\w+://)" '{}' +
 done
 }
 
