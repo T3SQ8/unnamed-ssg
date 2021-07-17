@@ -9,5 +9,84 @@ markdown2html \fIFILE\fR
 .SH DESCRIPTION
 \fBmarkdown2html\fR converts a basic markdown syntax to HTML using awk.
 
+.SH MARKDOWN SYNTAX
+The following Markdown syntax is supported:
+
+.EX
+# Heading
+## Heading
+### Heading
+#### Heading
+##### Heading
+###### Heading
+
+Lorem *ipsum* dolor sit amet, **consectetur** adipiscing elit,
+[sed](https://www.example.com) do eiusmod tempor incididunt ut labore et dolore
+magna aliqua.
+
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+> tempor incididunt ut labore et dolore magna aliqua.
+
+1. First item
+2. Second item
+3. Third item
+
+- First item
+- Second item
+- Third item
+
+* First item
+* Second item
+* Third item
+
+---
+
+![image alt](image.jpg)
+.EE
+
+The output becomes:
+
+.EX
+<h1>Heading</h1>
+<h2>Heading</h2>
+<h3>Heading</h3>
+<h4>Heading</h4>
+<h5>Heading</h5>
+<h6>Heading</h6>
+
+<p>
+Lorem <em>ipsum</em> dolor sit amet, <strong>consectetur</strong> adipiscing elit,
+<a href="https://www.example.com">sed</a> do eiusmod tempor incididunt ut labore et dolore
+magna aliqua.
+</p>
+
+<blockquote>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua.
+</blockquote>
+
+<ol>
+<li>First item</li>
+<li>Second item</li>
+<li>Third item</li>
+</ol>
+
+<ul>
+<li>First item</li>
+<li>Second item</li>
+<li>Third item</li>
+</ul>
+
+<ul>
+<li>First item</li>
+<li>Second item</li>
+<li>Third item</li>
+</ul>
+
+<hr/>
+
+<img src="image.jpg" alt="image alt"/>
+.EE
+
 .SH SEE ALSO
 \fBssg-build\fR(1).
