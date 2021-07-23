@@ -129,70 +129,56 @@ awk '
 		}
 	}
 
-	{
-		# Single line elements
-		if ($0 ~ /^---$/) {
-			print "<hr/>"
-			next
-		} else if (/^!\[.+\]\(.+\)$/) {
-			print gensub(/!\[(.+)\]\((.+)\)/, "<img src=\"\\2\" alt=\"\\1\"/>", "g")
-			next
-		}
+	/^---$/ { print "<hr/>"; next }
+	/^\s*$/ { envclose(); next }
+	END { envclose() }
 
-		# Inline formatting
+	{
 		$0 = gensub(/\*\*([^*]+)\*\*/, "<strong>\\1</strong>", "g")
 		$0 = gensub(/\*([^*]+)\*/, "<em>\\1</em>", "g")
 		$0 = gensub(/`([^`]+)`/, "<code>\\1</code>", "g")
+		$0 = gensub(/!\[([^\]]+)\]\(([^)]+)\)/,
+		   "<img src=\"\\2\" alt=\"\\1\" title=\"\\1\"/>", "g")
 		$0 = gensub(/\[([^\]]+)\]\(([^)]+)\)/, "<a href=\"\\2\">\\1</a>", "g")
+	}
 
-		# Headings
-		if ($0 ~ /^#{1,6}\s/) {
-			hsize = "h" length($1)
-			$1 = ""
-			sub(/^\s/, "")
-			printf "<%s>%s</%s>\n", hsize, $0, hsize
-			next
-		}
+	/^#{1,6}\s/ {
+		hsize = "h" length($1)
+		sub(/^\S+\s/, "")
+		printf "<%s>%s</%s>\n", hsize, $0, hsize
+		next
+	}
 
-		# These items can be thought of as environments.
-		if (ol==0 && ul==0 && blockquote==0 && p==0) {
+	{
+		# These items can be thought of as environments. Only one can be active
+		# at a time, and the opened enviroment is closed later on with the
+		# envclose() function.
+		if (!(ol || ul || blockquote || p)) {
 			if ($0 ~ /^[0-9]\.\s/) {
 				ol=1
 				print "<ol>"
 			} else if ($0 ~ /^[-*]\s/) {
 				ul=1
 				print "<ul>"
-			} else if ($0 ~ /^[0-9]\.\s/) {
-				ol=1
-				print "<ol>"
 			} else if ($0 ~ /^>\s/) {
 				blockquote=1
 				print "<blockquote>"
-			} else if ($0 ~ ".") {
+			} else {
 				p=1
 				print "<p>"
 			}
 		}
 
-		# The previously opened environment is ended here.
-		if ($0 ~ /^$/) {
-			envclose()
-		}
-
-		# Removing markdown markup depending on the current environment.
+		# Environment specific action.
 		if (blockquote) {
 			sub(/^>\s/, "")
-		} else if (ol||ul) {
-			sub(/^\s*([0-9]\.|[-*])\s/, "")
+		} else if (ol || ul) {
+			sub(/^\s*\S+\s/, "")
 			$0="<li>"$0"</li>"
 		}
 
 		print
 	}
-
-	# envclose is run at the end of the file incase there is an opened enviroment
-	# left.
-	END { envclose() }
 ' < "${1:-/dev/stdin}"
 }
 
