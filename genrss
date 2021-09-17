@@ -1,56 +1,39 @@
-#!/bin/sh
+#!/usr/bin/awk -f
 
-while getopts t:u:d:i flag; do
-	case $flag in
-		t) title=$OPTARG;;
-		u) url=$OPTARG;;
-		d) description=$OPTARG;;
-		i) inject=1;;
-	esac
-done
-shift "$((OPTIND - 1))"
+BEGIN {
+	print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+	print "<rss version=\"2.0\">"
+	print "<channel>"
+	printf "<title>%s</title>\n", RSSTitle
+	printf "<link>%s</link>\n", WebsiteURL
+	if (RSSDescription)
+		printf "<description>%s</description>\n", RSSDescription
 
-cat <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-<channel>
-<title>${title:-Title}</title>
-<link>${url:-url}</link>
-<description>${description:-description}</description>
-EOF
+}
 
-recsel "${1:-/dev/stdin}" | {
-	# If the $inject variable is set, content will be added to the database
-	# running through the pipline using sed and awk. If not, the contents
-	# will be sent to cat, which hands it over without modification.
-	[ "$inject" ] && {
-		awk '
-			/^File:.*\.html$/ {
-				src = $0
-				sub(/^File:\s\/?/, "", src)
-				print "Contents:"
-				print system("sed s/^/+/ " src) > "/dev/null"
-			}
+/^#/ { next }
+/^$/ { next }
 
-			{ print }
-		'
-	} || cat
-} |
-recfmt '
-<item>
-<title>{{Name}}</title>
-<link>{{File}}</link>
-<guid>{{File}}</guid>
-<pubDate>{{Date}}</pubDate>
-<description><![CDATA[
-<a href="{{File}}">{{Name}}</a>
-{{Extra}}
-{{Contents}}
-]]></description>
-</item>
-'
+{
+	print "<item>"
+	"date -R -d " $1 | getline pubDate
+	printf "<title>%s</title>\n", $2
+	printf "<link>%s</link>\n", $3
+	printf "<guid>%s</guid>\n", $3
+	printf "<pubDate>%s</pubDate>\n", pubDate
+	print "<description><![CDATA["
+	if ($4) print $4 "\n"
+	if($3 ~ /\.htm[l]?$/) {
+		print system("cat " gensub(/^\//, "", "g", $3)) > "/dev/null"
+	} else {
+		printf "<a href=\"%s\">%s</a>\n", $3, $2
+	}
+	print "]]></description>"
+	print "</item>"
+}
 
-cat <<EOF
-</channel>
-</rss>
-EOF
+END {
+	print "</channel>"
+	print "</rss>"
+
+}

@@ -1,20 +1,21 @@
-#!/bin/sh
+#!/usr/bin/awk -f
 
-while getopts t: flag; do
-	case $flag in
-		t) template=$OPTARG;;
-	esac
-done
-shift "$((OPTIND - 1))"
+BEGIN { print "<ul>" }
 
-[ "$template" ] || template='
-<li>
-<b>{{Date}}:</b>
-<a href="{{File}}">{{Name}}</a>
-{{Extra}}
-</li>
-'
+/^#/ { next }
+/^$/ { next }
 
-echo "<ul>"
-recsel "${1:-/dev/stdin}" | recfmt "$template"
-echo "</ul>"
+{
+	print "<li>"
+	printf "<b>%s:</b>\n", $1
+	printf "<a href=\"%s\">%s</a>\n", $3, $2
+	if ($4) {
+		if (length($4) > 50)
+			printf "<details><summary>Extra</summary>%s</details>\n", $4
+		else
+			printf "(%s)\n", $4
+	}
+	print "</li>"
+}
+
+END { print "</ul>" }
