@@ -1,0 +1,72 @@
+#!/bin/sh
+
+awk '
+	# TODO: Sub items in lists
+
+	function envclose() {
+		if (ol) {
+			ol=0
+			print "</ol>"
+		} else if (ul) {
+			ul=0
+			print "</ul>"
+		} else if (blockquote) {
+			blockquote=0
+			print "</blockquote>"
+		} else if (p) {
+			p=0
+			print "</p>"
+		}
+	}
+
+	/^---$/ { print "<hr/>"; next }
+	/^\s*$/ { envclose(); next }
+	END { envclose() }
+
+	{
+		$0 = gensub(/\*\*([^*]+)\*\*/, "<strong>\\1</strong>", "g")
+		$0 = gensub(/\*([^*]+)\*/, "<em>\\1</em>", "g")
+		$0 = gensub(/`([^`]+)`/, "<code>\\1</code>", "g")
+		$0 = gensub(/!\[([^\]]+)\]\(([^)]+)\)/,
+		   "<img src=\"\\2\" alt=\"\\1\" title=\"\\1\"/>", "g")
+		$0 = gensub(/\[([^\]]+)\]\(([^)]+)\)/, "<a href=\"\\2\">\\1</a>", "g")
+	}
+
+	/^#{1,6}\s/ {
+		hsize = "h" length($1)
+		sub(/^\S+\s/, "")
+		printf "<%s>%s</%s>\n", hsize, $0, hsize
+		next
+	}
+
+	{
+		# These items can be thought of as environments. Only one can be active
+		# at a time, and the opened enviroment is closed later on with the
+		# envclose() function.
+		if (!(ol || ul || blockquote || p)) {
+			if ($0 ~ /^[0-9]\.\s/) {
+				ol=1
+				print "<ol>"
+			} else if ($0 ~ /^[-*]\s/) {
+				ul=1
+				print "<ul>"
+			} else if ($0 ~ /^>\s/) {
+				blockquote=1
+				print "<blockquote>"
+			} else {
+				p=1
+				print "<p>"
+			}
+		}
+
+		# Environment specific action.
+		if (blockquote) {
+			sub(/^>\s/, "")
+		} else if (ol || ul) {
+			sub(/^\s*\S+\s/, "")
+			$0="<li>"$0"</li>"
+		}
+
+		print
+	}
+' < "${1:-/dev/stdin}"

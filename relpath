@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for dir do
+	find "$dir" -type f -name '*.html' \
+		-exec grep -HP "(src|href)=[\"'][^/](?!\w+://)" '{}' +
+done

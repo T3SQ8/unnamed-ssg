@@ -1,0 +1,12 @@
+#!/bin/sh
+
+while getopts s: flag; do
+	case $flag in
+		s) format=$OPTARG;;
+	esac
+done
+shift "$((OPTIND - 1))"
+
+for dir do
+	find "$dir" -type f -printf "${format:-<li><a href=\"%p\">%p</a></li>\n}"
+done

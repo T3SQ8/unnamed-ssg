@@ -1,0 +1,56 @@
+#!/bin/sh
+
+while getopts t:u:d:i flag; do
+	case $flag in
+		t) title=$OPTARG;;
+		u) url=$OPTARG;;
+		d) description=$OPTARG;;
+		i) inject=1;;
+	esac
+done
+shift "$((OPTIND - 1))"
+
+cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>${title:-Title}</title>
+<link>${url:-url}</link>
+<description>${description:-description}</description>
+EOF
+
+recsel "${1:-/dev/stdin}" | {
+	# If the $inject variable is set, content will be added to the database
+	# running through the pipline using sed and awk. If not, the contents
+	# will be sent to cat, which hands it over without modification.
+	[ "$inject" ] && {
+		awk '
+			/^File:.*\.html$/ {
+				src = $0
+				sub(/^File:\s\/?/, "", src)
+				print "Contents:"
+				print system("sed s/^/+/ " src) > "/dev/null"
+			}
+
+			{ print }
+		'
+	} || cat
+} |
+recfmt '
+<item>
+<title>{{Name}}</title>
+<link>{{File}}</link>
+<guid>{{File}}</guid>
+<pubDate>{{Date}}</pubDate>
+<description><![CDATA[
+<a href="{{File}}">{{Name}}</a>
+{{Extra}}
+{{Contents}}
+]]></description>
+</item>
+'
+
+cat <<EOF
+</channel>
+</rss>
+EOF

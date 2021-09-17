@@ -1,0 +1,13 @@
+#!/bin/sh
+
+while getopts t:R: arg; do
+	case $arg in
+		t) template=$OPTARG;;
+		R) regex=$OPTARG;;
+		\?|*) exit 1;;
+	esac
+done
+shift $(expr $OPTIND - 1)
+
+sed "/${regex:-^\s*<!--WRAPHTML-->$}/r ${1:-/dev/stdin}" \
+	"${template:-template.html}"
