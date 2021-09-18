@@ -1,99 +1,50 @@
-A simple POSIX shell "library" for generating websites and RSS feeds using GNU
-Recutils. Unlike other static site generators (which are usually very
-opnionated), it provides the bare minimum to ensure customizability and
-flexability. This is mainly done through user generated templates, meaning that
-both automation (of RSS feeds or homepages) and the ability to change the
-content layout though CSS are easily done.
-
-# Dependencies
-- [GNU Recutils](https://www.gnu.org/software/recutils)
-- Core utilities
+A set of simple POSIX shell & AWK scripts for generating websites and RSS
+feeds. Unlike other static site generators. It provides the bare minimum to
+ensure customizability and flexibility, mainly through user generated templates
+and directly modifying the scripts (which isn't as hard as it sounds).
 
 # Installation
-Copy the `ssg-build` to your `$PATH` or use the included `Makefile` if you
-prefer.
-```bash
-make install
-make uninstall
-```
+use the provided `Makefile` (run `make install` as root) or copy the scripts to
+your `$PATH`
 
 # Usage
-* `dirindex` -- directory indexer
-* `genindex` -- index generator
-* `genrss` -- RSS feed generator
-* `gentoc` -- table of contents generator
-* `markdown2html` -- markdown to HTML generator
-* `wraphtml` -- wrap html input in a template
+* `dirindex` -- directory indexer. Generates an HTML list of all files in a directory.
+* `genindex` -- index generator. Generates an HTML index file in the form of an unordered list.
+* `genrss` -- RSS feed generator. Generates an RSS feed in XML format.
+* `gentoc` -- table of contents generator generates a table of contents for a given HTML file. The outermost `<ol>` tag will have the `toc` class so it can be customized with CSS. Note that gentoc only prints the table of contents **without** the actual HTML file.
+* `relpath` -- finds relative links in HTML files.
+* `markdown2html` -- markdown to HTML generator. Basic markdown syntax to HTML converter using awk.
+* `wraphtml` -- wrap html input in a template.
 
-See the included manpages in the `man` directory for usage information.
+See the included manpages in the `man` directory for usage information and
+other details.
 ```bash
 man man/<file>
 ```
 
 ## Quickstart
-1. Create a Recutils database with the following content (In this example, it
-   will be named `index.rec`):
+1. Create an index file in the following format (In this example the file will
+   be called `index.db`.): `DATE|TITLE|FILE|EXTRA` (The separator can be
+   anything you like, just make sure to change `|` to whatever you chose later
+   on.)
 ```
-%rec: Files
-%mandatory: Date File Name
-
-Date: 2021-07-06
-File: file2.html
-Name: Second example file
-
-Date: 2021-06-24
-File: file1.html
-Name: First example file
+2021-05-12|Example file 1|/file.html|<a href="https://example.org">More info here</a>
+2021-07-23|Example file 2|/file2.html|<a href="https://example.org">See also</a>
 ```
-1. Create the HTML files you added to the Recutils database. Make sure that
-   they **do not** share the same name.
-```html
-<h1>File1</h1>
-<p>Lorem ipsum</p>
-```
-```html
-<h1>File2</h1>
-<p>Lorem ipsum</p>
-```
-1. Create a template HTML file (`template.html`) with you want the previous file to be wrapped
-   in. (The pattern `<!--WRAPHTML-->` will be replaced with the HTML file. See
-   the documentation for details on how to change this behavior.)
-```html
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>Welcome</title>
-	</head>
-	<body>
-		<!--WRAPHTML-->
-	</body>
-</html>
-```
-1. Generate the RSS feed.
+2. Generate the RSS feed with `genrss`. (Replace the example data with your own.)
 ```bash
-genrss -i index.rec > rss.xml
+genrss -F'|' -v RSSTitle="Random archive" \
+	-v WebsiteURL="https://example.org" \
+	-v RSSDescription="Public archive of very important files" \
+	index.db > rss.xml
 ```
 1. Generate the index HTML file. (The `index.html` file is also wrapped in the
    template in this case.)
 ```bash
-genindex index.rec | wraphtml > index.html
+genindex index.db | wraphtml > index.html
 ```
-1. Wrap the HTML files in the template.
+1. Wrap the your HTML files in the template (this step is easily automated in a script).
 ```bash
-wraphtml file1_in.html > file1.html
-wraphtml file2_in.html > file2.html
+wraphtml file1_in.html > file1_out.html
+wraphtml file2_in.html > file2_out.html
 ```
-
-## Comprehensive example
-To view a demonstration of the available functions, run the `example.sh` script,
-then open the newly generated `index.html` file.
-
-# Splitting functions into files
-The provided `splitfunc.awk` script will split the functions inside `ssg-build`
-into separate files for use where shell functions are accessible (e.g. in a
-`Makefile` or when using `xargs`). You can either split the functions and
-manage them manually or use the provided command in the makefile.
-```bash
-make install_split
-```
-
