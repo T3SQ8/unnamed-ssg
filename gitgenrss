@@ -1,0 +1,38 @@
+#!/bin/sh
+
+while getopts t:l:d: flag; do
+	case $flag in
+		t) RSStitle=$OPTARG;;
+		l) RSSlink=$OPTARG;;
+		d) RSSdescription=$OPTARG;;
+		*) echo "$USAGE"; exit 1;;
+	esac
+done
+shift "$((OPTIND - 1))"
+
+cat <<-EOF
+	<?xml version="1.0" encoding="UTF-8"?>
+	<rss version="2.0">
+	<channel>
+	<title>$RSStitle</title>
+	<link>$RSSlink</link>
+	<description>$RSSdescription</description>
+EOF
+
+git log --pretty='%H' |
+	while read -r hash; do
+		echo "<item>"
+		git log -1 "$hash" --pretty='<guid>%H</guid>%n<author>%ae (%an)</author>%n<pubDate>%aD</pubDate>%n<title>%s</title>'
+		git log -1 "$hash" --format='' --name-status | awk '
+		/\.html$|\.pdf$/ {print "<link>"$NF"</link>"; exit}
+		'
+		echo "<description><![CDATA["
+		git log -1 "$hash" --format='' --name-status
+		echo "]]></description>"
+		echo "</item>"
+	done
+
+cat <<-EOF
+	</channel>
+	</rss>
+EOF
