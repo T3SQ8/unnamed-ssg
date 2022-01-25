@@ -1,5 +1,24 @@
 #!/bin/sh
 
+help() {
+cat <<EOF
+usage: markdown2html [-h] FILE
+
+Convert Markdown files to HTML files.
+
+options:
+   -h print help message
+EOF
+}
+
+while getopts h flag; do
+	case $flag in
+		h) help; exit;;
+		\?) help; exit 1;;
+	esac
+done
+shift "$((OPTIND - 1))"
+
 awk '
 	# TODO: Sub items in lists
 

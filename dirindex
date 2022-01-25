@@ -1,12 +1,28 @@
 #!/bin/sh
 
-while getopts s: flag; do
+help() {
+cat <<EOF
+usage: dirindex [-h] [-s FORMAT] DIR1 [DIR2 ...]
+
+Generate an HTML list from a list of directories.
+
+options:
+   -h        print help message
+   -s FORMAT specify output format (default: $format_default)
+EOF
+}
+
+format_default='<li><a href="%p">%p</a></li>\n'
+
+while getopts hs: flag; do
 	case $flag in
 		s) format=$OPTARG;;
+		h) help; exit;;
+		\?) help; exit 1;;
 	esac
 done
 shift "$((OPTIND - 1))"
 
 for dir do
-	find "$dir" -type f -printf "${format:-<li><a href=\"%p\">%p</a></li>\n}"
+	find "$dir" -type f -printf "${format:-$format_default}"
 done
