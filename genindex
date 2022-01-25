@@ -1,21 +1,23 @@
-#!/usr/bin/awk -f
+#!/usr/bin/env python
 
-BEGIN { print "<ul>" }
+import json
+import argparse
 
-/^#/ { next }
-/^$/ { next }
+parser = argparse.ArgumentParser(description='Generate an index HTML from a JSON database.')
+parser.add_argument('json_file', help='input JSON file', metavar='FILE', nargs='?', default='/dev/stdin')
+args = parser.parse_args()
 
-{
-	print "<li>"
-	printf "<b>%s:</b>\n", $1
-	printf "<a href=\"%s\">%s</a>\n", $3, $2
-	if ($4) {
-		if (length($4) > 50)
-			printf "<details><summary>Extra</summary>%s</details>\n", $4
-		else
-			printf "(%s)\n", $4
-	}
-	print "</li>"
-}
+with open(args.json_file, encoding='utf-8') as f:
+    json_data = json.load(f)
 
-END { print "</ul>" }
+print("<ul>")
+for entry in json_data:
+    print("<li>")
+    print(f"<b>{entry['title']}:</b>")
+    print(f"<a href='{entry['file']}'>{entry['title']}</a>")
+    if 'tags' in entry:
+        print(f"{entry['tags']}")
+    if 'comment' in entry:
+        print(f"<details><summary>Extra</summary>{entry['comment']}</details>")
+    print("</li>")
+print("</ul>")
