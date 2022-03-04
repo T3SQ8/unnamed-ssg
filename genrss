@@ -1,46 +1,65 @@
 #!/usr/bin/env python
 
+# pylint: disable=c-extension-no-member
+
+import os.path
 import json
 import hashlib
 import argparse
 import mimetypes
+from lxml import etree as ET
 
-parser = argparse.ArgumentParser(description='Generate an RSS feed from a JSON database.')
-parser.add_argument('json_file',           help='input JSON file',
-        default='/dev/stdin', nargs='?', metavar='FILE')
-parser.add_argument('-t', '--title',       help='RSS feed title',       required=True)
-parser.add_argument('-l', '--link',        help='RSS feed link',        required=True)
-parser.add_argument('-d', '--description', help='RSS feed description', required=True)
-args = parser.parse_args()
+def load_json_file(json_file):
+    """Load JSON from a file"""
+    with open(json_file, encoding='utf-8') as file:
+        return json.load(file)
 
-with open(args.json_file, encoding='utf-8') as f:
-    json_data = json.load(f)
+def md5_checksum(infile):
+    """Get the MD5 checksum for an input file"""
+    with open(infile, 'rb') as file:
+        return hashlib.md5(file.read()).hexdigest()
 
-print('<?xml version="1.0" encoding="UTF-8"?>')
-print('<rss version="2.0">')
-print('<channel>')
-print(f'<title>{args.title}</title>')
-print(f'<link>{args.link}</link>')
-print(f'<description>{args.description}</description>')
+def check_html_file(file):
+    """Check if the input file is an HTML file and if it is readable"""
+    check = False
+    if mimetypes.guess_type(file)[0] == "text/html" and os.path.isfile(file):
+        check = True
+    return check
 
-for entry in json_data:
-    print("<item>")
-    print(f"<title>{entry['title']}</title>")
-    print(f"<link>{entry['file']}</link>")
-    with open(entry['file'], 'rb') as f:
-        entry['md5'] = hashlib.md5(f.read()).hexdigest() # Get md5 hash for guid
-        print(f"<guid>{entry['md5']}</guid>")
-    print(f"<pubDate>{entry['date']}</pubDate>")
-    print('<description>')
-    if 'comment' in entry:
-        print(entry['comment'])
-    if mimetypes.guess_type(entry['file'])[0] == "text/html": # Include in feed if HTML file
-        print('<![CDATA[')
-        with open(entry['file'], encoding='utf-8') as f:
-            print(f.read())
-        print(']]>')
-    print('</description>')
-    print("</item>")
+def make_rss(json_data, rss_title, rss_link, rss_description):
+    """Generate RSS feed from JSON input"""
+    rss = ET.Element('rss', version="2.0")
+    channel = ET.SubElement(rss, 'channel')
+    ET.SubElement(channel, 'title').text = rss_title
+    ET.SubElement(channel, 'link').text = rss_link
+    ET.SubElement(channel, 'description').text = rss_description
+    for entry in json_data:
+        item = ET.SubElement(channel, 'item')
+        ET.SubElement(item, 'title').text = entry['title']
+        ET.SubElement(item, 'guid').text = md5_checksum(entry['file'])
+        ET.SubElement(item, 'date').text = entry['date'] # Proper date format
+        description = ET.SubElement(item, 'description')
+        if 'comment' in entry:
+            description.append(ET.fromstring(entry['comment']))
+        if check_html_file(entry['file']):
+            with open(entry['file'], encoding='utf-8') as htmlfile:
+                description.text = ET.CDATA(htmlfile.read())
+    rss = ET.tostring(rss, xml_declaration=True, pretty_print=True, encoding='utf-8').decode()
+    return rss
 
-print('</channel>')
-print('</rss>')
+def main():
+    """Generate RSS feed from JSON input"""
+    parser = argparse.ArgumentParser(description='Generate an RSS feed from a JSON database.')
+    parser.add_argument('json_file',           help='input JSON file',
+            default='/dev/stdin', nargs='?', metavar='FILE')
+    parser.add_argument('-t', '--title',       help='RSS feed title',       required=True)
+    parser.add_argument('-l', '--link',        help='RSS feed link',        required=True)
+    parser.add_argument('-d', '--description', help='RSS feed description', required=True)
+    args = parser.parse_args()
+
+    json_data = load_json_file(args.json_file)
+    rss = make_rss(json_data, args.title, args.link, args.description)
+    print(rss)
+
+if __name__ == '__main__':
+    main()

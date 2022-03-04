@@ -2,22 +2,36 @@
 
 import json
 import argparse
+from xml.etree import ElementTree as ET
 
-parser = argparse.ArgumentParser(description='Generate an index HTML from a JSON database.')
-parser.add_argument('json_file', help='input JSON file', metavar='FILE', nargs='?', default='/dev/stdin')
-args = parser.parse_args()
+def load_json_file(json_file):
+    """Load JSON from a file"""
+    with open(json_file, encoding='utf-8') as file:
+        return json.load(file)
 
-with open(args.json_file, encoding='utf-8') as f:
-    json_data = json.load(f)
+def make_index(json_data):
+    """Generate an HTML list from JSON data"""
+    ul = ET.Element('ul')
+    for entry in json_data:
+        li = ET.SubElement(ul, 'li')
+        ET.SubElement(li, 'b').text = entry['date']
+        ET.SubElement(li, 'a', href=entry['file']).text = entry['title'] #+ ' ' + ', '.join(entry['tags'])
+        if 'comment' in entry:
+            details = ET.SubElement(li, 'details')
+            details.append(ET.fromstring(entry['comment']))
+            #ET.SubElement(details, 'summary').text = 'Extra'
+    ET.indent(ul, space='\t')
+    ul = ET.tostring(ul, encoding='utf-8', method='html').decode()
+    return ul
 
-print("<ul>")
-for entry in json_data:
-    print("<li>")
-    print(f"<b>{entry['title']}:</b>")
-    print(f"<a href='{entry['file']}'>{entry['title']}</a>")
-    if 'tags' in entry:
-        print(f"{entry['tags']}")
-    if 'comment' in entry:
-        print(f"<details><summary>Extra</summary>{entry['comment']}</details>")
-    print("</li>")
-print("</ul>")
+def main():
+    """Generate an HTML list from JSON data"""
+    parser = argparse.ArgumentParser(description='Generate an index HTML from a JSON database.')
+    parser.add_argument('json_file', help='input JSON file', metavar='FILE',
+            nargs='?', default='/dev/stdin')
+    args = parser.parse_args()
+
+    print(make_index(load_json_file(args.json_file)))
+
+if __name__ == '__main__':
+    main()
