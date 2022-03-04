@@ -43,7 +43,7 @@ def make_rss(json_data, rss_title, rss_link, rss_description):
                 utils.format_datetime(datetime.fromisoformat(entry['date']))
         description = ET.SubElement(item, 'description')
         if 'comment' in entry:
-            description.append(ET.fromstring(entry['comment']))
+            description.append(ET.fromstring('<p>' + entry['comment'] + '</p>')) # Adds <p> tags to avoid errors
         if check_html_file(entry['file']):
             with open(entry['file'], encoding='utf-8') as htmlfile:
                 description.text = ET.CDATA(htmlfile.read())

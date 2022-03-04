@@ -18,7 +18,7 @@ def make_index(json_data):
         ET.SubElement(li, 'a', href=entry['file']).text = entry['title'] #+ ' ' + ', '.join(entry['tags'])
         if 'comment' in entry:
             details = ET.SubElement(li, 'details')
-            details.append(ET.fromstring(entry['comment']))
+            details.append(ET.fromstring('<p>' + entry['comment'] + '</p>')) # Adds <p> tags to avoid errors
             #ET.SubElement(details, 'summary').text = 'Extra'
     ET.indent(ul, space='\t')
     ul = ET.tostring(ul, encoding='utf-8', method='html').decode()
