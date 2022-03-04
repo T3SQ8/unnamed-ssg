@@ -11,7 +11,7 @@ def load_json_file(json_file):
 
 def make_index(json_data):
     """Generate an HTML list from JSON data"""
-    ul = ET.Element('ul')
+    ul = ET.Element('ul', id='index-list')
     for entry in json_data:
         li = ET.SubElement(ul, 'li')
         ET.SubElement(li, 'b').text = entry['date']
