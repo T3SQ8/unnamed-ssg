@@ -3,6 +3,8 @@
 # pylint: disable=c-extension-no-member
 
 import os.path
+from datetime import datetime
+from email import utils
 import json
 import hashlib
 import argparse
@@ -37,7 +39,8 @@ def make_rss(json_data, rss_title, rss_link, rss_description):
         item = ET.SubElement(channel, 'item')
         ET.SubElement(item, 'title').text = entry['title']
         ET.SubElement(item, 'guid').text = md5_checksum(entry['file'])
-        ET.SubElement(item, 'date').text = entry['date'] # Proper date format
+        ET.SubElement(item, 'date').text = \
+                utils.format_datetime(datetime.fromisoformat(entry['date']))
         description = ET.SubElement(item, 'description')
         if 'comment' in entry:
             description.append(ET.fromstring(entry['comment']))
