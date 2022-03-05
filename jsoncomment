@@ -1,0 +1,5 @@
+#!/bin/sh
+
+for file do
+	grep -v '^\s*//.' "${file:-/dev/stdin}"
+done
