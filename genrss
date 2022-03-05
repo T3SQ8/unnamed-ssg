@@ -38,8 +38,9 @@ def make_rss(json_data, rss_title, rss_link, rss_description):
     for entry in json_data:
         item = ET.SubElement(channel, 'item')
         ET.SubElement(item, 'title').text = entry['title']
+        ET.SubElement(item, 'link').text = entry['file']
         ET.SubElement(item, 'guid').text = md5_checksum(entry['file'])
-        ET.SubElement(item, 'date').text = \
+        ET.SubElement(item, 'pubDate').text = \
                 utils.format_datetime(datetime.fromisoformat(entry['date']))
         description = ET.SubElement(item, 'description')
         if 'comment' in entry:
